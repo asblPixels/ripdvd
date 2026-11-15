@@ -18,7 +18,28 @@ jobs:
           python-version: '3.12'
 
       - name: Check Python syntax
-        run: python -m py_compile src/ripdvd.py
+        run: |
+          python -m py_compile src/ripdvd.py
+          python -m py_compile src/ripdvd-win.py
+
+      - name: Check GTK window sets its content (blank-window regression guard)
+        run: |
+          python - <<'PY'
+          import ast, sys
+          src = open("src/ripdvd.py", encoding="utf-8").read()
+          tree = ast.parse(src)
+          cls = next((n for n in tree.body
+                      if isinstance(n, ast.ClassDef) and n.name == "RipdvdWindow"), None)
+          if cls is None:
+              print("RipdvdWindow class not found"); sys.exit(1)
+          init = next((n for n in cls.body
+                       if isinstance(n, ast.FunctionDef) and n.name == "__init__"), None)
+          calls = [n for n in ast.walk(init) if isinstance(n, ast.Call)]
+          ok = any(isinstance(c.func, ast.Attribute) and c.func.attr == "set_content"
+                   for c in calls)
+          print("set_content(box) present in __init__:", ok)
+          sys.exit(0 if ok else 1)
+          PY
 
       - name: Lint shell scripts
         run: |

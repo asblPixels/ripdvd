@@ -287,6 +287,10 @@ class RipdvdWindow(Adw.ApplicationWindow):
         footer_link.set_halign(Gtk.Align.CENTER)
         footer_box.append(footer_link)
         box.append(footer_box)
+
+        self.set_content(box)
+
+        self._set_combo_items(self.audio_combo, ["(scan requis)"])
         self._set_combo_items(self.sub_combo, ["Aucun"])
 
         if os.path.exists("/dev/sr0"):
