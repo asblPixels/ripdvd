@@ -725,7 +725,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         name.add_css_class("title-1")
         name.add_css_class("hero-title")
         hero.append(name)
-        ver = Gtk.Label(label="Version 1.1.0 — From disc to digital, effortlessly.")
+        ver = Gtk.Label(label="Version 1.2.0 — From disc to digital, effortlessly.")
         ver.add_css_class("hero-sub")
         hero.append(ver)
         content.append(hero)
