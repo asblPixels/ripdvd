@@ -65,6 +65,8 @@ if not exist "%LOCALAPPDATA%\RipDvD" (
     mkdir "%LOCALAPPDATA%\RipDvD"
 )
 copy /Y "src\ripdvd-win.py" "%LOCALAPPDATA%\RipDvD\ripdvd.py" >nul
+copy /Y "data\logo.png" "%LOCALAPPDATA%\RipDvD\logo.png" >nul
+copy /Y "data\ripdvd.ico" "%LOCALAPPDATA%\RipDvD\ripdvd.ico" >nul
 echo  [OK] Installed RipDvD to %LOCALAPPDATA%\RipDvD\
 
 REM Create Desktop shortcut

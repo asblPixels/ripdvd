@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/asblPixels/ripdvd/main/data/logo.png" width="150" alt="RipDvD logo"></p>
+
 # Welcome to the RipDvD Wiki
 
 **RipDvD** is a free, open-source, minimalist DVD ripper for Linux.

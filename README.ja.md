@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="data/logo.png" width="150" alt="RipDvD logo">
+
 # 🎬 RipDvD
 
 ### ディスクからデジタルへ — 手軽に。

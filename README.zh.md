@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="data/logo.png" width="150" alt="RipDvD logo">
+
 # 🎬 RipDvD
 
 ### 从光盘到数字 — 轻松无忧。

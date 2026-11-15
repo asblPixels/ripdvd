@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configuration file
 - Multiple title queue
 
+## [1.2.1] - 2026-11-15
+
+### Added
+- Official asblPixels logo in the app, icons, READMEs and wiki.
+
+### Changed
+- Version bumped to 1.2.1.
+
 ## [1.2.0] - 2026-11-15
 
 ### Added

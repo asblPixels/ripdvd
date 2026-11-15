@@ -36,6 +36,34 @@ def find_handbrake():
     return None
 
 
+def find_logo():
+    """Locate the app logo (asblPixels identity) on Windows."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        os.path.join(here, "logo.png"),
+        os.path.join(here, "data", "logo.png"),
+        os.path.join(os.environ.get("LOCALAPPDATA", ""), "RipDvD", "logo.png"),
+    ]
+    for path in candidates:
+        if os.path.isfile(path):
+            return path
+    return None
+
+
+def find_icon():
+    """Locate the .ico used for the window/taskbar icon on Windows."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        os.path.join(here, "ripdvd.ico"),
+        os.path.join(here, "data", "ripdvd.ico"),
+        os.path.join(os.environ.get("LOCALAPPDATA", ""), "RipDvD", "ripdvd.ico"),
+    ]
+    for path in candidates:
+        if os.path.isfile(path):
+            return path
+    return None
+
+
 def detect_dvd_drives():
     drives = []
     try:
@@ -108,6 +136,12 @@ class RipDvDWin(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(APP_TITLE)
+        icon = find_icon()
+        if icon:
+            try:
+                self.iconbitmap(icon)
+            except Exception:
+                pass
         self.geometry("560x680")
         self.resizable(True, True)
         self.configure(bg="#f0f0f0")
@@ -151,9 +185,29 @@ class RipDvDWin(tk.Tk):
         # Header
         header = tk.Frame(self, bg="#04302a", pady=14)
         header.pack(fill=tk.X)
-        tk.Label(header, text="RipDvD", font=("Segoe UI", 22, "bold"), fg="#ffffff", bg="#04302a").pack()
-        tk.Label(header, text="From disc to digital - effortlessly", font=("Segoe UI", 10), fg="#8fe3d0", bg="#04302a").pack()
-        tk.Label(header, text="by asblPixels", font=("Segoe UI", 10, "bold"), fg="#00e0b0", bg="#04302a").pack(pady=(2, 0))
+        inner = tk.Frame(header, bg="#04302a")
+        inner.pack()
+
+        logo_path = find_logo()
+        if logo_path:
+            try:
+                img = tk.PhotoImage(file=logo_path)
+                factor = max(1, img.width() // 72)
+                img = img.subsample(factor, factor)
+                logo_label = tk.Label(inner, image=img, bg="#04302a")
+                logo_label.image = img  # keep a reference
+                logo_label.pack(side=tk.LEFT, padx=(0, 14))
+            except Exception:
+                pass
+
+        hero_text = tk.Frame(inner, bg="#04302a")
+        hero_text.pack(side=tk.LEFT)
+        tk.Label(hero_text, text="RipDvD", font=("Segoe UI", 22, "bold"),
+                 fg="#ffffff", bg="#04302a").pack(anchor="w")
+        tk.Label(hero_text, text="From disc to digital - effortlessly",
+                 font=("Segoe UI", 10), fg="#8fe3d0", bg="#04302a").pack(anchor="w")
+        tk.Label(hero_text, text="by asblPixels", font=("Segoe UI", 10, "bold"),
+                 fg="#00e0b0", bg="#04302a").pack(anchor="w", pady=(2, 0))
         tk.Frame(self, bg="#00c9a0", height=3).pack(fill=tk.X)
 
         # Status
@@ -558,7 +612,7 @@ class RipDvDWin(tk.Tk):
         header.pack(fill=tk.X)
         tk.Label(header, text="RipDvD", font=("Segoe UI", 20, "bold"),
                  fg="#ffffff", bg="#04302a").pack()
-        tk.Label(header, text="Version 1.2.0 — From disc to digital, effortlessly",
+        tk.Label(header, text="Version 1.2.1 — From disc to digital, effortlessly",
                  font=("Segoe UI", 10), fg="#8fe3d0", bg="#04302a").pack()
         tk.Frame(win, bg="#00c9a0", height=3).pack(fill=tk.X)
 

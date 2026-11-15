@@ -48,6 +48,8 @@ if (-not (Test-Path $installDir)) {
     New-Item -ItemType Directory -Path $installDir -Force | Out-Null
 }
 Copy-Item -Path "src\ripdvd-win.py" -Destination "$installDir\ripdvd.py" -Force
+Copy-Item -Path "data\logo.png" -Destination "$installDir\logo.png" -Force
+Copy-Item -Path "data\ripdvd.ico" -Destination "$installDir\ripdvd.ico" -Force
 Write-Host "Installed to $installDir\ripdvd.py" -ForegroundColor Green
 
 # Create shortcut on Desktop

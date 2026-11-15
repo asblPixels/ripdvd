@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-11-15
+
+### Added
+- **Official asblPixels logo** integrated across the project: app hero banner (Linux + Windows), window/taskbar icon, GNOME icon theme, Windows `.ico`, READMEs (6 languages) and wiki home.
+- Multi-size icons (`16`–`512` px) and a multi-resolution Windows icon (`data/ripdvd.ico`).
+- Installers now deploy the logo and icons for every desktop size.
+
+### Changed
+- Version bumped to 1.2.1.
+
 ## [1.2.0] - 2026-11-15
 
 ### Added

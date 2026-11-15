@@ -49,6 +49,9 @@ THEME_CSS = b"""
 .hero-sub {
     color: rgba(255, 255, 255, 0.85);
 }
+.hero-logo {
+    border-radius: 14px;
+}
 .brand-caption {
     color: #00876c;
 }
@@ -59,6 +62,22 @@ progressbar > trough > progress {
     background-image: linear-gradient(90deg, #00b894, #00e0b0);
 }
 """
+
+
+def find_logo():
+    """Cherche le logo de l'application (identité asblPixels)."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        os.path.join(os.path.expanduser("~"), ".local", "share", "ripdvd", "logo.png"),
+        os.path.join(os.path.expanduser("~"), ".local", "share", "icons",
+                     "hicolor", "256x256", "apps", "ripdvd.png"),
+        os.path.join(here, "logo.png"),
+        os.path.join(here, "..", "data", "logo.png"),
+    ]
+    for path in candidates:
+        if os.path.isfile(path):
+            return os.path.abspath(path)
+    return None
 
 
 def install_theme():
@@ -171,18 +190,33 @@ class RipdvdWindow(Adw.ApplicationWindow):
         box.set_margin_end(20)
 
         # ---- Hero banner aux couleurs asblPixels ----
-        hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        hero = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
         hero.add_css_class("hero")
+
+        logo_path = find_logo()
+        if logo_path:
+            logo = Gtk.Picture.new_for_filename(logo_path)
+            logo.set_size_request(64, 64)
+            logo.set_content_fit(Gtk.ContentFit.CONTAIN)
+            logo.set_valign(Gtk.Align.CENTER)
+            logo.add_css_class("hero-logo")
+            hero.append(logo)
+
+        hero_text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        hero_text.set_valign(Gtk.Align.CENTER)
 
         title = Gtk.Label(label="RipDvD")
         title.add_css_class("title-1")
         title.add_css_class("hero-title")
-        hero.append(title)
+        title.set_halign(Gtk.Align.START)
+        hero_text.append(title)
 
         subtitle = Gtk.Label(label="Du disque au numérique — sans effort.")
         subtitle.add_css_class("hero-sub")
-        hero.append(subtitle)
+        subtitle.set_halign(Gtk.Align.START)
+        hero_text.append(subtitle)
 
+        hero.append(hero_text)
         box.append(hero)
 
         brand_caption = Gtk.Label(label="Un logiciel libre développé par asblPixels")
@@ -725,7 +759,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         name.add_css_class("title-1")
         name.add_css_class("hero-title")
         hero.append(name)
-        ver = Gtk.Label(label="Version 1.2.0 — From disc to digital, effortlessly.")
+        ver = Gtk.Label(label="Version 1.2.1 — From disc to digital, effortlessly.")
         ver.add_css_class("hero-sub")
         hero.append(ver)
         content.append(hero)
@@ -865,6 +899,7 @@ class RipdvdApp(Adw.Application):
 
     def do_activate(self):
         install_theme()
+        Gtk.Window.set_default_icon_name("ripdvd")
         win = RipdvdWindow(self)
         win.present()
 
