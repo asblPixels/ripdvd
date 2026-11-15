@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.0] - 2026-11-15
 
 ### Changed
-- **Complete redesign of the Linux interface** (GTK4/libadwaita): one screen per step (insert disc → movie detected → digitising → done), generous whitespace, no hero banner, no heavy borders, light and dark themes.
+- **Complete redesign of the interface on Linux (GTK4/libadwaita) and Windows (tkinter, now in French)**: one screen per step (insert disc → movie detected → digitising → done), generous whitespace, no hero banner, no heavy borders, light and dark themes.
 - **One-click flow kept**: the main action *Numériser le film* sits right under the audio/subtitle choices, which are pre-selected (French, no subtitles).
 - Readable track names ("Français · 5.1" instead of "Piste 1 — Français (AC3) (5.1 ch)").
 - Large percentage with estimated time remaining (parsed from HandBrake's ETA).
