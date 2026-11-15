@@ -1,9 +1,10 @@
 [Desktop Entry]
 Name=RipDvD
-Comment=One-click DVD ripper (MKV H.264)
-Exec=python3 /home/pixels/.local/bin/ripdvd-gui.py
+Comment=RipDvD by asblPixels — One-click DVD ripper (MKV H.264)
+Exec=sh -c 'exec python3 "$HOME/.local/bin/ripdvd-gui.py"'
 Icon=media-optical
 Type=Application
 Categories=AudioVideo;Video;
+Keywords=DVD;Rip;HandBrake;MKV;Video;
 Terminal=false
 StartupNotify=true

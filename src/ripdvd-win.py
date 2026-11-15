@@ -17,7 +17,7 @@ except ImportError:
     print("tkinter not available. Please reinstall Python.", file=sys.stderr)
     sys.exit(1)
 
-APP_TITLE = "RipDvD"
+APP_TITLE = "RipDvD — by asblPixels"
 OUT_DIR = os.path.join(os.path.expanduser("~"), "Videos", "Rips")
 DEBUG_LOG = os.path.join(os.path.expanduser("~"), "ripdvd-debug.log")
 
@@ -141,6 +141,9 @@ class RipDvDWin(tk.Tk):
         header.pack(fill=tk.X)
         tk.Label(header, text="RipDvD", font=("Segoe UI", 20, "bold"), fg="white", bg="#0078d4").pack()
         tk.Label(header, text="From disc to digital - effortlessly", font=("Segoe UI", 10), fg="#cce4ff", bg="#0078d4").pack()
+        brand = tk.Label(header, text="by asblPixels", font=("Segoe UI", 11, "bold"), fg="white", bg="#0078d4", cursor="hand2")
+        brand.pack()
+        brand.bind("<Button-1>", lambda _e: self.on_about())
 
         # Status
         sf = tk.Frame(self, bg="#f0f0f0", pady=6)
@@ -210,8 +213,9 @@ class RipDvDWin(tk.Tk):
         tk.Button(lf, text="Clear Log", font=("Segoe UI", 9), command=lambda: self.log.delete("1.0", tk.END), relief=tk.FLAT).pack(pady=2)
 
         # Footer
-        footer = tk.Label(self, text="RipDvD by asblPixels  |  MIT License  |  Open Source", font=("Segoe UI", 8), fg="#888", bg="#f0f0f0")
+        footer = tk.Label(self, text="© 2026 asblPixels  |  MIT License  |  Open Source  |  github.com/asblPixels/ripdvd", font=("Segoe UI", 8, "bold"), fg="#0078d4", bg="#f0f0f0", cursor="hand2")
         footer.pack(side=tk.BOTTOM, pady=4)
+        footer.bind("<Button-1>", lambda _e: self.on_about())
 
     def _show_setup_wizard(self):
         messagebox.showwarning("Setup Required",

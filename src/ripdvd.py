@@ -108,7 +108,7 @@ def parse_tracks_for_title(text, target_title):
 
 class RipdvdWindow(Adw.ApplicationWindow):
     def __init__(self, app):
-        super().__init__(application=app, title="RipDvD")
+        super().__init__(application=app, title="RipDvD — par asblPixels")
         self.set_default_size(500, 720)
         self.set_resizable(True)
 
@@ -136,8 +136,25 @@ class RipdvdWindow(Adw.ApplicationWindow):
 
         subtitle = Gtk.Label(label="Du disque au numérique — sans effort.")
         subtitle.add_css_class("dim-label")
-        subtitle.set_margin_bottom(10)
+        subtitle.set_margin_bottom(6)
         box.append(subtitle)
+
+        # ---- Branding : asblPixels bien visible ----
+        brand_btn = Gtk.Button(label="asblPixels")
+        brand_btn.add_css_class("pill")
+        brand_btn.add_css_class("suggested-action")
+        brand_btn.set_halign(Gtk.Align.CENTER)
+        brand_btn.set_tooltip_text("RipDvD est développé par asblPixels — cliquez pour les crédits et la licence")
+        brand_btn.connect("clicked", self.on_about_clicked)
+        box.append(brand_btn)
+
+        brand_caption = Gtk.Label(label="Un logiciel libre développé par asblPixels")
+        brand_caption.add_css_class("caption")
+        brand_caption.add_css_class("dim-label")
+        brand_caption.set_halign(Gtk.Align.CENTER)
+        brand_caption.set_margin_top(4)
+        brand_caption.set_margin_bottom(10)
+        box.append(brand_caption)
 
         src_text = f"HandBrake : {self.hb_source or 'NON TROUVÉ'}"
         self.src_label = Gtk.Label(label=src_text)
@@ -256,12 +273,20 @@ class RipdvdWindow(Adw.ApplicationWindow):
         box.append(scrolled)
 
         # Footer with credits
-        footer = Gtk.Label(label="RipDvD by asblPixels — MIT License — Open Source")
+        footer_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        footer_box.set_halign(Gtk.Align.CENTER)
+        footer_box.set_margin_top(8)
+        footer = Gtk.Label(label="© 2026 asblPixels — Licence MIT — Open Source")
         footer.add_css_class("caption")
-        footer.add_css_class("dim-label")
+        footer.add_css_class("accent")
         footer.set_halign(Gtk.Align.CENTER)
-        footer.set_margin_top(6)
-        box.append(footer)
+        footer_box.append(footer)
+        footer_link = Gtk.LinkButton(uri="https://github.com/asblPixels/ripdvd",
+                                     label="github.com/asblPixels/ripdvd")
+        footer_link.add_css_class("caption")
+        footer_link.set_halign(Gtk.Align.CENTER)
+        footer_box.append(footer_link)
+        box.append(footer_box)
         self._set_combo_items(self.sub_combo, ["Aucun"])
 
         if os.path.exists("/dev/sr0"):
