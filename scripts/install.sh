@@ -2,7 +2,7 @@
 # install-ripdvd.sh — installe ripdvd-gui sur Fedora/GNOME
 set -e
 
-SRC_DIR="$(cd "$(dirname "$0")" && pwd)"
+SRC_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 echo "=== Installation des dépendances Python/GTK ==="
 sudo dnf install -y python3 python3-gobject gtk4 libadwaita

@@ -1,4 +1,6 @@
 @echo off
+REM Always run from the repository root, wherever this file is double-clicked from
+cd /d "%~dp0.."
 REM ============================================================
 REM  RipDvD - Windows Installer (double-click to run)
 REM  No technical knowledge required!
@@ -37,18 +39,22 @@ where HandBrakeCLI >nul 2>&1
 if %errorlevel% neq 0 (
     if not exist "C:\Program Files\HandBrake\HandBrakeCLI.exe" (
         if not exist "C:\Program Files (x86)\HandBrake\HandBrakeCLI.exe" (
+        if not exist "%LOCALAPPDATA%\HandBrake\HandBrakeCLI.exe" (
             echo.
-            echo  [!] HandBrake is not installed.
+            echo  [!] HandBrakeCLI is not installed.
             echo.
-            echo  Please install HandBrake first:
-            echo  1. Go to https://handbrake.fr/downloads.php
-            echo  2. Download HandBrake for Windows
-            echo  3. Run the installer (default location is fine)
-            echo  4. Come back and run this installer again
+            echo  RipDvD needs the COMMAND LINE version of HandBrake.
+            echo  Easiest: open a terminal and type
+            echo     winget install HandBrake.HandBrake.CLI
+            echo  Or download "HandBrakeCLI" for Windows from
+            echo     https://handbrake.fr/downloads2.php
+            echo  and put HandBrakeCLI.exe in %LOCALAPPDATA%\HandBrake\
+            echo  Then run this installer again.
             echo.
             pause
-            start https://handbrake.fr/downloads.php
+            start https://handbrake.fr/downloads2.php
             exit /b 1
+        )
         )
     )
 )
@@ -64,7 +70,7 @@ REM Create install directory
 if not exist "%LOCALAPPDATA%\RipDvD" (
     mkdir "%LOCALAPPDATA%\RipDvD"
 )
-copy /Y "src\ripdvd-win.py" "%LOCALAPPDATA%\RipDvD\ripdvd.py" >nul
+copy /Y "src\ripdvd-win.py" "%LOCALAPPDATA%\RipDvD\ripdvd.py" >nul || (echo  [X] Copy failed: run this file from the extracted RipDvD folder. & pause & exit /b 1)
 copy /Y "data\logo.png" "%LOCALAPPDATA%\RipDvD\logo.png" >nul
 copy /Y "data\ripdvd.ico" "%LOCALAPPDATA%\RipDvD\ripdvd.ico" >nul
 echo  [OK] Installed RipDvD to %LOCALAPPDATA%\RipDvD\

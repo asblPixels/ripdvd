@@ -193,9 +193,9 @@ Or search for **RipDvD** in the GNOME application menu.
 
 **No technical knowledge required!** Just 3 steps:
 
-1. **Download** the ZIP: https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip
+1. **Download** the ZIP: https://github.com/asblPixels/ripdvd/archive/refs/heads/main.zip
 2. **Extract** it to a folder (e.g., your Desktop).
-3. **Double-click** `install-windows.bat` and follow the on-screen instructions.
+3. **Double-click** `scripts\install-windows.bat` and follow the on-screen instructions.
 
 That's it! A **RipDvD** shortcut will appear on your Desktop. Double-click it to start ripping DVDs.
 
@@ -204,14 +204,14 @@ That's it! A **RipDvD** shortcut will appear on your Desktop. Double-click it to
 #### Manual steps (if the installer doesn't work)
 
 1. **Install Python**: Download from https://www.python.org/downloads/ — check "Add Python to PATH".
-2. **Install HandBrake**: Download from https://handbrake.fr/downloads.php
-3. **Run the app**: `python ripdvd-win.py`
+2. **Install HandBrakeCLI** (command line version): `winget install HandBrake.HandBrake.CLI`, or download it from https://handbrake.fr/downloads2.php
+3. **Run the app**: from the extracted RipDvD folder, `python src\ripdvd-win.py`
 
 #### Windows notes
 
 - The Windows version uses **tkinter** (built into Python) instead of GTK4.
 - DVD drive detection is automatic. If not detected, enter the drive letter manually (e.g., `D:\`).
-- libdvdcss is included with HandBrake for Windows.
+- libdvdcss is **not** included with HandBrake for Windows: for copy-protected DVDs, place `libdvdcss-2.dll` next to `HandBrakeCLI.exe`.
 - Output files are saved to `%USERPROFILE%\Videos\Rips\`.
 
 ### Verify everything works (all platforms)

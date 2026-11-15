@@ -234,7 +234,7 @@ ripdvd/
 
 ### Windows
 
-Windows 10/11 の場合、https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip から ZIP をダウンロードし、展開して `install-windows.bat` をダブルクリックしてください。技術的な知識は不要です。
+Windows 10/11 の場合、https://github.com/asblPixels/ripdvd/archive/refs/heads/main.zip から ZIP をダウンロードし、展開して `install-windows.bat` をダブルクリックしてください。技術的な知識は不要です。
 
 ## 🐛 トラブルシューティング
 

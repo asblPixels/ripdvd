@@ -3,6 +3,9 @@
 
 $ErrorActionPreference = "Stop"
 
+# Always run from the repository root
+Set-Location (Join-Path $PSScriptRoot "..")
+
 Write-Host "=== ripdvd Windows Installer ===" -ForegroundColor Cyan
 
 # Check Python
@@ -28,7 +31,7 @@ if (-not $hb) {
     }
     if (-not $found) {
         Write-Host "HandBrakeCLI not found." -ForegroundColor Yellow
-        Write-Host "Please download HandBrake for Windows from https://handbrake.fr/downloads.php"
+        Write-Host "Install the command line version: winget install HandBrake.HandBrake.CLI (or https://handbrake.fr/downloads2.php)"
         Write-Host "Install it, then re-run this script."
         exit 1
     }
@@ -78,4 +81,4 @@ Write-Host "Launch ripdvd from the Desktop shortcut or Start Menu."
 Write-Host "Output files will be saved to: $outDir"
 Write-Host ""
 Write-Host "Note: For encrypted DVDs, ensure libdvdcss is available."
-Write-Host "HandBrake for Windows includes libdvdcss support."
+Write-Host "HandBrake for Windows does NOT include libdvdcss: place libdvdcss-2.dll next to HandBrakeCLI.exe."
