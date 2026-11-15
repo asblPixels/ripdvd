@@ -80,10 +80,10 @@ Meanwhile, your DVDs are gathering dust. RipDvD turns them into the first brick 
 | Parameter | Value |
 |---|---|
 | Container | MKV (Matroska) |
-| Video codec | H.264 (x264), RF 20, preset `medium` |
+| Video codec | H.264 (x264), RF 20, encoder preset `fast` (`medium` in the CLI script) |
 | Resolution | Native DVD (480p NTSC / 576p PAL) — no upscaling |
 | Framerate | Source (25 / 29.97 fps) |
-| Audio | Passthrough (copy) — keeps original 5.1 when present |
+| Audio | Passthrough (copy) of AC3, DTS and MP2 tracks — keeps the original 5.1; LPCM tracks are converted to AAC |
 | Subtitles | Passthrough (optional) |
 | Chapters | Preserved |
 | Typical size | ~1.0 – 1.5 GB per 2-hour movie |
@@ -299,7 +299,7 @@ Open the debug log (`~/.ripdvd-debug.log`) or click **Voir le log de debug**. Th
 - Insufficient disk space in `~/Vidéos/Rips/`.
 
 ### Slow encoding on older CPUs
-This is expected — x264 software encoding on a Sandy Bridge i3 takes ~10–15 min per movie. The app uses `medium` preset for a good quality/speed balance. For faster rips, edit `--encoder-preset` to `fast` or `veryfast` in `src/ripdvd.py`.
+This is expected — x264 software encoding on a Sandy Bridge i3 takes ~10–15 min per movie. The app uses the `fast` encoder preset for a good quality/speed balance. For even faster rips, edit `--encoder-preset` to `veryfast` in `src/ripdvd.py`.
 
 ## 🤝 Need a hand?
 

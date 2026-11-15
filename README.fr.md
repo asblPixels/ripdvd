@@ -80,10 +80,10 @@ Pendant ce temps, vos DVD prennent la poussière. RipDvD en fait la première br
 | Paramètre | Valeur |
 |---|---|
 | Conteneur | MKV (Matroska) |
-| Codec vidéo | H.264 (x264), RF 20, preset `medium` |
+| Codec vidéo | H.264 (x264), RF 20, preset d'encodage `fast` (`medium` dans le script CLI) |
 | Résolution | Native DVD (480p NTSC / 576p PAL) — pas d'upscaling |
 | Framerate | Source (25 / 29,97 fps) |
-| Audio | Passthrough (copie) — conserve le 5.1 original si présent |
+| Audio | Copie directe des pistes AC3, DTS et MP2 — conserve le 5.1 d'origine ; les pistes LPCM sont converties en AAC |
 | Sous-titres | Passthrough (optionnel) |
 | Chapitres | Préservés |
 | Taille typique | ~1,0 – 1,5 Go par film de 2 heures |
@@ -301,7 +301,7 @@ Ouvrez le log de debug (`~/.ripdvd-debug.log`) ou cliquez sur **Voir le log de d
 - Espace disque insuffisant dans `~/Vidéos/Rips/`.
 
 ### Encodage lent sur les vieux CPU
-C'est normal — l'encodage logiciel x264 sur un i3 Sandy Bridge prend ~10-15 min par film. L'application utilise le preset `medium` pour un bon compromis qualité/vitesse. Pour des rips plus rapides, modifiez `--encoder-preset` en `fast` ou `veryfast` dans `src/ripdvd.py`.
+C'est normal — l'encodage logiciel x264 sur un i3 Sandy Bridge prend ~10-15 min par film. L'application utilise le preset d'encodage `fast` pour un bon compromis qualité/vitesse. Pour des rips encore plus rapides, modifiez `--encoder-preset` en `veryfast` dans `src/ripdvd.py`.
 
 ## 🤝 Besoin d'un coup de main ?
 

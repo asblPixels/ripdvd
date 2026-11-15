@@ -719,10 +719,13 @@ class RipdvdWindow(Adw.ApplicationWindow):
             "--main-feature",
             "-o", outfile,
             "--preset", "Fast 480p30",
+            "--maxWidth", "720", "--maxHeight", "576",  # résolution DVD d'origine (PAL 576 / NTSC 480)
             "--encoder", "x264",
             "--quality", "20",
             "--encoder-preset", "fast",
             "--aencoder", "copy",
+            "--audio-copy-mask", "aac,ac3,eac3,dts,dtshd,mp2,mp3",  # son d'origine copié tel quel
+            "--audio-fallback", "av_aac",
             "--audio", str(audio_idx),
         ]
         if sub_idx is not None:

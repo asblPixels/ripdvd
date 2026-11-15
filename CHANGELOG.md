@@ -20,7 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Secondary actions (rescan, open movies folder, live log, about, quit) moved to a ☰ menu with shortcuts (Ctrl+R, Ctrl+L, Ctrl+Q); the log is a collapsible panel.
 - Errors and interruptions shown as a calm screen with *Réessayer* / *Reprendre* instead of a raw error dialog; closing during an encode asks for confirmation.
 - About window replaced by the standard libadwaita About dialog.
-- Encoding engine and HandBrake command unchanged.
+
+### Fixed
+- **Native resolution is now really kept**: the `Fast 480p30` preset limited output to 480 lines, so PAL DVDs (720×576) were downscaled to 720×480. Added `--maxWidth 720 --maxHeight 576` (Linux, Windows and CLI). NTSC DVDs are unchanged.
+- **Original audio is now really copied**: the preset only allowed AAC passthrough, so AC3 5.1 tracks were re-encoded to AAC. Added `--audio-copy-mask aac,ac3,eac3,dts,dtshd,mp2,mp3` with `--audio-fallback av_aac` (LPCM, which cannot be passed through, becomes AAC).
+- **CLI script**: `--chapters` was given without its required value, so HandBrake refused every encode; replaced with `--markers`.
+- Fedora installer stopped before installing (wrong source path); Windows installer failed when double-clicked from `scripts\`; HandBrakeCLI on Windows is a separate download and libdvdcss is not bundled — docs corrected.
 
 ## [1.2.2] - 2026-11-15
 

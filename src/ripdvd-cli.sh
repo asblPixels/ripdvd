@@ -71,11 +71,11 @@ fi
 # ---- Encodage avec barre de progression ----
 (
     "${HB[@]}" -i "$DVD_DEV" -t "$TITLE" -o "$OUTFILE" \
-        --preset "Fast 480p30" \
+        --preset "Fast 480p30" --maxWidth 720 --maxHeight 576 \
         --encoder x264 --quality 20 --encoder-preset medium \
-        --aencoder copy --audio 1 \
+        --aencoder copy --audio-copy-mask aac,ac3,eac3,dts,dtshd,mp2,mp3 --audio-fallback av_aac --audio 1 \
         --subtitle 1,2,3,4,5,6,7,8,9,10 \
-        --chapters \
+        --markers \
         2>&1 | stdbuf -oL grep --line-buffered "Encoding:" | \
         while IFS= read -r line; do
             pct=$(echo "$line" | sed -n 's/.*,\s*\([0-9.]*\) %.*/\1/p')
