@@ -260,21 +260,35 @@ class RipDvDWin(tk.Tk):
         self._log("=== DVD SCAN ===\n")
         threading.Thread(target=self._scan_worker, daemon=True).start()
 
+    def _run_scan(self, args):
+        proc = subprocess.Popen(
+            self.hb + args,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+        )
+        lines = []
+        for line in proc.stdout:
+            lines.append(line)
+            self._log(line)
+        proc.wait()
+        return "".join(lines)
+
     def _scan_worker(self):
         try:
-            self._log(f"Launching: {' '.join(self.hb)} -i {self.dvd_drive} --title 0\n")
-            proc = subprocess.Popen(
-                self.hb + ["-i", self.dvd_drive, "--title", "0"],
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+            # Fast scan: main feature only, no preview generation.
+            self._log(f"Launching: {' '.join(self.hb)} -i {self.dvd_drive} --main-feature (fast scan, no previews)\n")
+            scan0 = self._run_scan(
+                ["-i", self.dvd_drive, "--scan", "--main-feature", "--previews", "0"]
             )
-            lines = []
-            for line in proc.stdout:
-                lines.append(line)
-                self._log(line)
-            proc.wait()
-            scan0 = "".join(lines)
-
             best_title, best_ms = parse_title_scan(scan0)
+
+            if best_ms == 0:
+                # Fallback: full scan, still without previews.
+                self._log("\n[Fast scan returned nothing - full scan...]\n")
+                scan0 = self._run_scan(
+                    ["-i", self.dvd_drive, "--title", "0", "--previews", "0"]
+                )
+                best_title, best_ms = parse_title_scan(scan0)
+
             if best_ms == 0:
                 with open(DEBUG_LOG, "w") as f:
                     f.write(scan0)
@@ -379,12 +393,12 @@ class RipDvDWin(tk.Tk):
 
         cmd = self.hb + [
             "-i", self.dvd_drive,
-            "-t", str(self.best_title),
+            "--main-feature",
             "-o", outfile,
             "--preset", "Fast 480p30",
             "--encoder", "x264",
             "--quality", "20",
-            "--encoder-preset", "medium",
+            "--encoder-preset", "fast",
             "--aencoder", "copy",
             "--audio", str(audio_idx),
         ]
@@ -474,12 +488,12 @@ class RipDvDWin(tk.Tk):
 
         cmd = self.hb + [
             "-i", self.dvd_drive,
-            "-t", str(title),
+            "--main-feature",
             "-o", outfile,
             "--preset", "Fast 480p30",
             "--encoder", "x264",
             "--quality", "20",
-            "--encoder-preset", "medium",
+            "--encoder-preset", "fast",
             "--aencoder", "copy",
             "--audio", str(audio_idx),
         ]
