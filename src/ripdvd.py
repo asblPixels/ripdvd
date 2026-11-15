@@ -255,9 +255,13 @@ class RipdvdWindow(Adw.ApplicationWindow):
         scrolled.add_css_class("card")
         box.append(scrolled)
 
-        self.set_content(box)
-
-        self._set_combo_items(self.audio_combo, ["(scan requis)"])
+        # Footer with credits
+        footer = Gtk.Label(label="RipDvD by asblPixels — MIT License — Open Source")
+        footer.add_css_class("caption")
+        footer.add_css_class("dim-label")
+        footer.set_halign(Gtk.Align.CENTER)
+        footer.set_margin_top(6)
+        box.append(footer)
         self._set_combo_items(self.sub_combo, ["Aucun"])
 
         if os.path.exists("/dev/sr0"):

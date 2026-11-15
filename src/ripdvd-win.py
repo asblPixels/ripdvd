@@ -209,9 +209,9 @@ class RipDvDWin(tk.Tk):
         self.log.pack(fill=tk.BOTH, expand=True, pady=4)
         tk.Button(lf, text="Clear Log", font=("Segoe UI", 9), command=lambda: self.log.delete("1.0", tk.END), relief=tk.FLAT).pack(pady=2)
 
-    def _log(self, text):
-        self.log.insert(tk.END, text)
-        self.log.see(tk.END)
+        # Footer
+        footer = tk.Label(self, text="RipDvD by asblPixels  |  MIT License  |  Open Source", font=("Segoe UI", 8), fg="#888", bg="#f0f0f0")
+        footer.pack(side=tk.BOTTOM, pady=4)
 
     def _show_setup_wizard(self):
         messagebox.showwarning("Setup Required",
