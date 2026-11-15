@@ -86,13 +86,25 @@ mais un contrôle total si vous le souhaitez.
 | **Disque** | ~1,5 Go libre par film (sortie) + ~8 Go temp pendant l'encodage |
 | **Lecteur optique** | Lecteur DVD interne ou USB (apparaît comme `/dev/sr0`) |
 
-### Dépendances logicielles
+### Distributions supportées
 
-- Python 3.10+
-- `python3-gobject`, `gtk4`, `libadwaita`
-- `HandBrakeCLI` (natif préféré ; Flatpak `fr.handbrake.ghb` en secours)
-- `zenity` (boîtes de dialogue d'erreur)
-- `libdvdcss` (DVD commerciaux chiffrés uniquement)
+Ce dépôt fournit des branches par distribution avec des installateurs adaptés :
+
+| Branche | Distribution | Script d'installation |
+|---|---|---|
+| `main` / `fedora` | Fedora 43+ | `scripts/install.sh` |
+| `arch` | Arch Linux | `scripts/install-arch.sh` |
+| `ubuntu` | Ubuntu 22.04+ | `scripts/install-ubuntu.sh` |
+| `debian` | Debian 12+ | `scripts/install-debian.sh` |
+| `windows` | Windows 10/11 | `scripts/install-windows.ps1` |
+
+Pour utiliser une branche spécifique :
+
+```bash
+git clone -b <branche> https://github.com/asblPixels/ripdvd.git
+cd ripdvd
+bash scripts/install-<distro>.sh   # ou .ps1 sous Windows
+```
 
 ## 🚀 Installation
 

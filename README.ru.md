@@ -86,13 +86,25 @@
 | **Диск** | ~1,5 ГБ свободного места на фильм (вывод) + ~8 ГБ временно во время кодирования |
 | **Оптический привод** | Внутренний или USB DVD-привод (появляется как `/dev/sr0`) |
 
-### Программные зависимости
+### Поддерживаемые дистрибутивы
 
-- Python 3.10+
-- `python3-gobject`, `gtk4`, `libadwaita`
-- `HandBrakeCLI` (предпочтительно нативный; Flatpak `fr.handbrake.ghb` как запасной)
-- `zenity` (диалоги ошибок)
-- `libdvdcss` (только для зашифрованных коммерческих DVD)
+Этот репозиторий предоставляет ветки для каждого дистрибутива с адаптированными установщиками:
+
+| Ветка | Дистрибутив | Скрипт установки |
+|---|---|---|
+| `main` / `fedora` | Fedora 43+ | `scripts/install.sh` |
+| `arch` | Arch Linux | `scripts/install-arch.sh` |
+| `ubuntu` | Ubuntu 22.04+ | `scripts/install-ubuntu.sh` |
+| `debian` | Debian 12+ | `scripts/install-debian.sh` |
+| `windows` | Windows 10/11 | `scripts/install-windows.ps1` |
+
+Для использования конкретной ветки:
+
+```bash
+git clone -b <ветка> https://github.com/asblPixels/ripdvd.git
+cd ripdvd
+bash scripts/install-<distro>.sh   # или .ps1 на Windows
+```
 
 ## 🚀 Установка
 

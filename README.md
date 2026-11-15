@@ -86,13 +86,25 @@ get a perfect MKV. No configuration required, but full control when you want it.
 | **Disk** | ~1.5 GB free per movie (output) + ~8 GB temp during encoding |
 | **Optical drive** | Internal or USB DVD reader (appears as `/dev/sr0`) |
 
-### Software dependencies
+### Supported distributions
 
-- Python 3.10+
-- `python3-gobject`, `gtk4`, `libadwaita`
-- `HandBrakeCLI` (native preferred; Flatpak `fr.handbrake.ghb` as fallback)
-- `zenity` (error dialogs)
-- `libdvdcss` (encrypted commercial DVDs only)
+This repository provides distribution-specific branches with adapted installers:
+
+| Branch | Distribution | Install script |
+|---|---|---|
+| `main` / `fedora` | Fedora 43+ | `scripts/install.sh` |
+| `arch` | Arch Linux | `scripts/install-arch.sh` |
+| `ubuntu` | Ubuntu 22.04+ | `scripts/install-ubuntu.sh` |
+| `debian` | Debian 12+ | `scripts/install-debian.sh` |
+| `windows` | Windows 10/11 | `scripts/install-windows.ps1` |
+
+To use a specific branch:
+
+```bash
+git clone -b <branch> https://github.com/asblPixels/ripdvd.git
+cd ripdvd
+bash scripts/install-<distro>.sh   # or .ps1 on Windows
+```
 
 ## 🚀 Installation
 
