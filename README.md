@@ -1,38 +1,62 @@
-# ripdvd
+<div align="center">
+
+# 🎬 ripdvd
+
+### One click. One DVD. One MKV file.
+
+**A minimalist, open-source DVD ripper for Linux (Fedora / GNOME)**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Fedora%20Linux-blue.svg)](https://fedoraproject.org/)
-[![GUI](https://img.shields.io/badge/GUI-GTK4%20%2F%20libadwaita-green.svg)](https://gnome.org/)
+[![Desktop](https://img.shields.io/badge/desktop-GNOME%2049-green.svg)](https://gnome.org/)
+[![GUI](https://img.shields.io/badge/GUI-GTK4%20%2F%20libadwaita-teal.svg)](https://gnome.org/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![HandBrake](https://img.shields.io/badge/backend-HandBrakeCLI-orange.svg)](https://handbrake.fr/)
+[![Backend](https://img.shields.io/badge/backend-HandBrakeCLI-orange.svg)](https://handbrake.fr/)
+[![Release](https://img.shields.io/github/v/release/asblPixels/ripdvd.svg)](https://github.com/asblPixels/ripdvd/releases)
+[![Stars](https://img.shields.io/github/stars/asblPixels/ripdvd.svg?style=social)](https://github.com/asblPixels/ripdvd)
 
-> **One click. One DVD. One MKV file.**
->
-> A minimalist, open-source DVD ripper for Linux (Fedora/GNOME). A clean GTK4/libadwaita GUI
-> wrapping [HandBrakeCLI](https://handbrake.fr/) that converts your DVDs into high-quality MKV
-> files with chapter markers, multi-language audio and subtitles — optimized for home media
-> servers (Jellyfin, Kodi, Plex).
+<br>
 
-<p align="center">
-  <img src="docs/screenshot-main.png" alt="ripdvd main window" width="420">
-</p>
+[🇬🇧 English](README.md) · [🇫🇷 Français](README.fr.md) · [🇪🇸 Español](README.es.md) · [🇷🇺 Русский](README.ru.md) · [🇨🇳 中文](README.zh.md) · [🇯🇵 日本語](README.ja.md)
+
+</div>
 
 ---
 
-## ✨ Features
+## 📖 About
 
-- **One-click ripping** — insert a DVD, click *Rip DVD*, get a ready-to-stream MKV.
-- **Automatic title detection** — picks the longest title (the main movie) automatically.
-- **Multi-language audio** — detects every audio track and lets you pick the language (French preferred by default, then English).
-- **Subtitles** — optional passthrough of any subtitle track (VobSub), or none.
-- **Chapter markers** — preserved in the MKV for easy navigation in Jellyfin/Kodi.
-- **Live output window** — real-time HandBrakeCLI log (tail) with auto-scroll.
-- **Progress bar** — percentage updated live during encoding.
-- **Stop button** — cancel an in-progress encode at any time.
-- **Native GNOME look** — GTK4 + libadwaita, fits perfectly on Fedora Workstation.
-- **Thread-safe** — UI updates are marshalled to the GTK main thread.
-- **Rescan button** — re-analyse the disc without restarting the app.
-- **Debug log** — full output saved to `~/.ripdvd-debug.log` for troubleshooting.
+**ripdvd** is a free, open-source, minimalist DVD ripping application built for Linux.
+It provides a clean, native GNOME (GTK4 / libadwaita) graphical interface on top of
+[HandBrakeCLI](https://handbrake.fr/), turning your DVD collection into high-quality
+MKV files ready for your home media server (Jellyfin, Kodi, Plex).
+
+> **Origin**: This project is created and maintained by **[asblPixels](https://github.com/asblPixels)**
+> as part of its open-source software initiative. It is released under the MIT License
+> and is free to use, modify and distribute.
+
+### ✨ Why ripdvd?
+
+Most DVD rippers on Linux are either command-line only, overly complex, or Windows-only.
+ripdvd aims to be **the simplest possible tool**: insert a disc, click one button,
+get a perfect MKV. No configuration required, but full control when you want it.
+
+## 🎯 Features
+
+- 🖱️ **One-click ripping** — insert a DVD, click *Rip DVD*, get a ready-to-stream MKV.
+- 🔍 **Automatic title detection** — picks the longest title (the main movie) automatically.
+- 🌍 **Multi-language audio** — detects every audio track; French preferred by default, then English.
+- 💬 **Subtitles** — optional passthrough of any subtitle track (VobSub), or none.
+- 📑 **Chapter markers** — preserved in the MKV for easy navigation in Jellyfin/Kodi.
+- 📺 **Live output window** — real-time HandBrakeCLI log (tail) with auto-scroll.
+- 📊 **Progress bar** — percentage updated live during encoding.
+- ⏸️ **Stop button** — cancel an in-progress encode at any time.
+- 🔄 **Resume button** — retry the last encode with the same parameters.
+- 🚪 **Quit button** — close the app cleanly (stops any running encode first).
+- 🔄 **Rescan button** — re-analyse the disc without restarting the app.
+- 🧹 **Clear log** — clear the live output window.
+- 🎨 **Native GNOME look** — GTK4 + libadwaita, fits perfectly on Fedora Workstation.
+- 🧵 **Thread-safe** — all UI updates marshalled to the GTK main thread.
+- 🐛 **Debug log** — full output saved to `~/.ripdvd-debug.log`.
 
 ## 📋 Default output profile
 
@@ -50,11 +74,9 @@
 > 💡 DVDs are SD sources. Keeping native resolution avoids artificial upscaling and keeps
 > files small while looking great on any TV.
 
-## 🖥️ Requirements
+## 🖥️ Supported systems
 
-### Supported systems
-
-| Component | Required |
+| Component | Requirement |
 |---|---|
 | **Operating system** | Fedora 43+ (tested on Fedora 45). Any recent Fedora/RHEL-based distro should work. |
 | **Desktop** | GNOME (GTK4/libadwaita). Works on X11 and Wayland. |
@@ -142,9 +164,10 @@ Both should print `OK`.
 |---|---|
 | **Rip DVD** | Start encoding the selected title. |
 | **Arrêter** | Cancel the current encode. |
-| **Rescanner** | Re-analyse the disc (useful after swapping DVDs). |
 | **Reprendre** | Resume/retry the last encode with the same parameters. |
 | **Quitter** | Close the application (stops any running encode first). |
+| **Rescanner** | Re-analyse the disc (useful after swapping DVDs). |
+| **Effacer log** | Clear the live output window. |
 
 ### CLI version
 
@@ -206,27 +229,47 @@ Open the debug log (`~/.ripdvd-debug.log`) or click **Voir le log de debug**. Th
 ### Slow encoding on older CPUs
 This is expected — x264 software encoding on a Sandy Bridge i3 takes ~10–15 min per movie. The app uses `medium` preset for a good quality/speed balance. For faster rips, edit `--encoder-preset` to `fast` or `veryfast` in `src/ripdvd.py`.
 
-## 🤝 Contributing
+## 🙏 Acknowledgements
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR.
+This project would not exist without the incredible work of:
 
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feature/my-feature`.
-3. Commit your changes: `git commit -m "feat: add my feature"`.
-4. Push and open a Pull Request.
+- **[HandBrake](https://handbrake.fr/)** and its team — the encoding engine that powers everything.
+- **[libdvdcss](https://www.videolan.org/developers/libdvdcss.html)** (VideoLAN) — DVD decryption.
+- **[GNOME / GTK4 / libadwaita](https://gnome.org/)** — the UI toolkit.
+- **[RPM Fusion](https://rpmfusion.org/)** — packaging for Fedora.
+- **[Fedora Project](https://fedoraproject.org/)** — the operating system.
+- All open-source contributors and the community.
+
+## 📚 Sources & references
+
+- HandBrake CLI documentation: https://handbrake.fr/docs/en/latest/cli/
+- HandBrake presets reference: https://handbrake.fr/docs/en/latest/technical/video-bframes.html
+- libdvdcss documentation: https://www.videolan.org/developers/libdvdcss.html
+- GTK4 / libadwaita documentation: https://docs.gtk.org/gtk4/ and https://gnome.pages.gitlab.gnome.org/libadwaita/
+- PyGObject documentation: https://pygobject.readthedocs.io/
+- RPM Fusion configuration: https://rpmfusion.org/Configuration
+- Fedora multimedia guide: https://docs.fedoraproject.org/en-US/quick-docs/assembly_installing-plugins-for-playing-movies-and-music/
+
+## 👨‍💻 Creators
+
+**ripdvd** is created and maintained by **[asblPixels](https://github.com/asblPixels)**
+as part of its open-source software initiative.
+
+Contributions, bug reports and feature requests are welcome!
 
 ## 📜 License
 
 This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
 
-## 🙏 Acknowledgements
+## ⚠️ Legal note
 
-- [HandBrake](https://handbrake.fr/) — the encoding engine.
-- [libdvdcss](https://www.videolan.org/developers/libdvdcss.html) — DVD decryption.
-- [GNOME / GTK4 / libadwaita](https://gnome.org/) — the UI toolkit.
-- [RPM Fusion](https://rpmfusion.org/) — packaging for Fedora.
+This tool is intended for backing up DVDs you own for personal use.
+Decrypting copy-protected discs may be restricted in your country. Check your local laws.
 
 ---
 
-> ⚠️ **Legal note**: This tool is intended for backing up DVDs you own for personal use.
-> Decrypting copy-protected discs may be restricted in your country. Check your local laws.
+<div align="center">
+
+Made with ❤️ by [asblPixels](https://github.com/asblPixels) · Open Source · MIT License
+
+</div>
