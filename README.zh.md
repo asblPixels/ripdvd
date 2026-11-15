@@ -84,13 +84,25 @@ ripdvd 的目标是成为 **尽可能简单的工具**：插入光盘，点击�
 | **磁盘** | 每部电影 ~1.5 GB 可用空间 (输出) + 编码期间 ~8 GB 临时空间 |
 | **光驱** | 内置或 USB DVD 读取器 (显示为 `/dev/sr0`) |
 
-### 软件依赖
+### 支持的发行版
 
-- Python 3.10+
-- `python3-gobject`, `gtk4`, `libadwaita`
-- `HandBrakeCLI` (优先原生；Flatpak `fr.handbrake.ghb` 作为备用)
-- `zenity` (错误对话框)
-- `libdvdcss` (仅加密商业 DVD)
+本仓库为每个发行版提供分支，包含适配的安装程序：
+
+| 分支 | 发行版 | 安装脚本 |
+|---|---|---|
+| `main` / `fedora` | Fedora 43+ | `scripts/install.sh` |
+| `arch` | Arch Linux | `scripts/install-arch.sh` |
+| `ubuntu` | Ubuntu 22.04+ | `scripts/install-ubuntu.sh` |
+| `debian` | Debian 12+ | `scripts/install-debian.sh` |
+| `windows` | Windows 10/11 | `scripts/install-windows.ps1` |
+
+使用特定分支：
+
+```bash
+git clone -b <分支> https://github.com/asblPixels/ripdvd.git
+cd ripdvd
+bash scripts/install-<distro>.sh   # 或 Windows 上使用 .ps1
+```
 
 ## 🚀 安装
 
