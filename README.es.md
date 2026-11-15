@@ -86,13 +86,25 @@ pero con control total si lo deseas.
 | **Disco** | ~1,5 GB libre por película (salida) + ~8 GB temp durante la codificación |
 | **Lector óptico** | Lector de DVD interno o USB (aparece como `/dev/sr0`) |
 
-### Dependencias de software
+### Distribuciones soportadas
 
-- Python 3.10+
-- `python3-gobject`, `gtk4`, `libadwaita`
-- `HandBrakeCLI` (nativo preferido; Flatpak `fr.handbrake.ghb` como respaldo)
-- `zenity` (diálogos de error)
-- `libdvdcss` (solo DVD comerciales cifrados)
+Este repositorio proporciona ramas por distribución con instaladores adaptados:
+
+| Rama | Distribución | Script de instalación |
+|---|---|---|
+| `main` / `fedora` | Fedora 43+ | `scripts/install.sh` |
+| `arch` | Arch Linux | `scripts/install-arch.sh` |
+| `ubuntu` | Ubuntu 22.04+ | `scripts/install-ubuntu.sh` |
+| `debian` | Debian 12+ | `scripts/install-debian.sh` |
+| `windows` | Windows 10/11 | `scripts/install-windows.ps1` |
+
+Para usar una rama específica:
+
+```bash
+git clone -b <rama> https://github.com/asblPixels/ripdvd.git
+cd ripdvd
+bash scripts/install-<distro>.sh   # o .ps1 en Windows
+```
 
 ## 🚀 Instalación
 

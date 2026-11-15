@@ -84,13 +84,25 @@ ripdvd は **可能な限りシンプルなツール**を目指しています�
 | **ディスク** | 映画 1 本あたり ~1.5 GB の空き (出力) + エンコード中に ~8 GB の一時領域 |
 | **光学ドライブ** | 内蔵または USB DVD リーダー (`/dev/sr0` として表示) |
 
-### ソフトウェア依存関係
+### サポートされるディストリビューション
 
-- Python 3.10+
-- `python3-gobject`, `gtk4`, `libadwaita`
-- `HandBrakeCLI` (ネイティブ推奨; Flatpak `fr.handbrake.ghb` をフォールバック)
-- `zenity` (エラーダイアログ)
-- `libdvdcss` (暗号化された市販 DVD のみ)
+このリポジトリは、適応されたインストーラーを備えたディストリビューション別のブランチを提供しています：
+
+| ブランチ | ディストリビューション | インストールスクリプト |
+|---|---|---|
+| `main` / `fedora` | Fedora 43+ | `scripts/install.sh` |
+| `arch` | Arch Linux | `scripts/install-arch.sh` |
+| `ubuntu` | Ubuntu 22.04+ | `scripts/install-ubuntu.sh` |
+| `debian` | Debian 12+ | `scripts/install-debian.sh` |
+| `windows` | Windows 10/11 | `scripts/install-windows.ps1` |
+
+特定のブランチを使用するには：
+
+```bash
+git clone -b <ブランチ> https://github.com/asblPixels/ripdvd.git
+cd ripdvd
+bash scripts/install-<distro>.sh   # または Windows では .ps1
+```
 
 ## 🚀 インストール
 
