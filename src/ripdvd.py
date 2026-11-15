@@ -378,21 +378,40 @@ class RipdvdWindow(Adw.ApplicationWindow):
 
         threading.Thread(target=self._scan_worker, daemon=True).start()
 
+    def _run_scan(self, args):
+        """Lance un scan HandBrakeCLI et renvoie sa sortie complète."""
+        proc = subprocess.Popen(
+            self.hb + args,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+        )
+        lines = []
+        for line in proc.stdout:
+            lines.append(line)
+            self._append_log(line)
+        proc.wait()
+        return "".join(lines)
+
     def _scan_worker(self):
         try:
-            self._append_log(f"Lancement : {' '.join(self.hb)} -i /dev/sr0 --title 0\n")
-            proc = subprocess.Popen(
-                self.hb + ["-i", "/dev/sr0", "--title", "0"],
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+            drive = "/dev/sr0"
+            # Scan rapide : seulement le film principal, sans génération d'aperçus.
+            self._append_log(
+                f"Lancement : {' '.join(self.hb)} -i {drive} --main-feature "
+                f"(scan rapide, sans aperçus)\n"
             )
-            lines = []
-            for line in proc.stdout:
-                lines.append(line)
-                self._append_log(line)
-            proc.wait()
-            scan0 = "".join(lines)
-
+            scan0 = self._run_scan(
+                ["-i", drive, "--scan", "--main-feature", "--previews", "0"]
+            )
             best_title, best_ms = parse_title_scan(scan0)
+
+            if best_ms == 0:
+                # Repli : analyse complète, toujours sans aperçus.
+                self._append_log("\n[Scan rapide sans résultat — analyse complète…]\n")
+                scan0 = self._run_scan(
+                    ["-i", drive, "--title", "0", "--previews", "0"]
+                )
+                best_title, best_ms = parse_title_scan(scan0)
+
             if best_ms == 0:
                 with open(DEBUG_LOG, "w") as f:
                     f.write(scan0)
@@ -506,12 +525,12 @@ class RipdvdWindow(Adw.ApplicationWindow):
 
         cmd = self.hb + [
             "-i", "/dev/sr0",
-            "-t", str(self.best_title),
+            "--main-feature",
             "-o", outfile,
             "--preset", "Fast 480p30",
             "--encoder", "x264",
             "--quality", "20",
-            "--encoder-preset", "medium",
+            "--encoder-preset", "fast",
             "--aencoder", "copy",
             "--audio", str(audio_idx),
         ]
@@ -611,12 +630,12 @@ class RipdvdWindow(Adw.ApplicationWindow):
 
         cmd = self.hb + [
             "-i", "/dev/sr0",
-            "-t", str(title),
+            "--main-feature",
             "-o", outfile,
             "--preset", "Fast 480p30",
             "--encoder", "x264",
             "--quality", "20",
-            "--encoder-preset", "medium",
+            "--encoder-preset", "fast",
             "--aencoder", "copy",
             "--audio", str(audio_idx),
         ]
@@ -681,32 +700,118 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.get_application().quit()
 
     def on_about_clicked(self, _btn):
-        dialog = Adw.AboutDialog.new()
-        dialog.set_application_name("RipDvD")
-        dialog.set_application_icon("media-optical")
-        dialog.set_version("1.1.0")
-        dialog.set_comments("From disc to digital — effortlessly.\n\nOne-click DVD ripper for Linux & Windows.")
-        dialog.set_copyright("© 2026 asblPixels — All rights reserved.")
-        dialog.set_license_type(Gtk.License.MIT_X11)
-        dialog.set_developers(["asblPixels (https://github.com/asblPixels)"])
-        dialog.set_website("https://github.com/asblPixels/ripdvd")
-        dialog.set_website_label("github.com/asblPixels/ripdvd")
-        dialog.set_issue_url("https://github.com/asblPixels/ripdvd/issues")
-        # Credits
-        dialog.add_credit_section("Acknowledgements", [
-            "HandBrake (https://handbrake.fr/) — encoding engine",
-            "libdvdcss (VideoLAN) — DVD decryption",
-            "GNOME / GTK4 / libadwaita — UI toolkit",
-            "RPM Fusion — Fedora packaging",
-            "Fedora Project — operating system",
-        ])
-        dialog.add_credit_section("Legal", [
-            "This software is provided under the MIT License.",
-            "For personal use — backing up DVDs you own.",
-            "Decrypting copy-protected discs may be restricted in your country.",
-            "Check your local laws before use.",
-        ])
-        dialog.present(self)
+        about = Gtk.Window(transient_for=self, modal=True, title="À propos de RipDvD")
+        about.set_default_size(600, 720)
+
+        header = Adw.HeaderBar()
+        header.set_title_widget(Gtk.Label(label="À propos de RipDvD"))
+        about.set_titlebar(header)
+
+        scrolled = Gtk.ScrolledWindow()
+        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        about.set_child(scrolled)
+
+        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        content.set_margin_top(18)
+        content.set_margin_bottom(18)
+        content.set_margin_start(22)
+        content.set_margin_end(22)
+        scrolled.set_child(content)
+
+        # --- Bandeau ---
+        hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        hero.add_css_class("hero")
+        name = Gtk.Label(label="RipDvD")
+        name.add_css_class("title-1")
+        name.add_css_class("hero-title")
+        hero.append(name)
+        ver = Gtk.Label(label="Version 1.1.0 — From disc to digital, effortlessly.")
+        ver.add_css_class("hero-sub")
+        hero.append(ver)
+        content.append(hero)
+
+        def add_section(title, body, link=None, link_label=None):
+            t = Gtk.Label()
+            t.set_markup(f"<b>{GLib.markup_escape_text(title)}</b>")
+            t.set_halign(Gtk.Align.START)
+            t.set_margin_top(16)
+            content.append(t)
+            b = Gtk.Label(label=body)
+            b.set_wrap(True)
+            b.set_xalign(0)
+            b.set_selectable(True)
+            content.append(b)
+            if link:
+                lb = Gtk.LinkButton(uri=link, label=link_label or link)
+                lb.set_halign(Gtk.Align.START)
+                lb.add_css_class("caption")
+                content.append(lb)
+
+        add_section(
+            "Développé par asblPixels",
+            "RipDvD est un projet libre créé et maintenu par asblPixels.",
+            "https://github.com/asblPixels", "github.com/asblPixels",
+        )
+        add_section(
+            "À propos de l'application",
+            "RipDvD transforme vos DVD en fichiers MKV en un seul clic. "
+            "Choisissez la langue audio et les sous-titres, puis lancez le rip : "
+            "le film est encodé en H.264 (qualité RF 20), à sa résolution d'origine, "
+            "avec ses chapitres, dans le dossier ~/Vidéos/Rips.",
+        )
+        add_section(
+            "Crédits et remerciements",
+            "• HandBrake — moteur d'encodage (handbrake.fr)\n"
+            "• libdvdcss / VideoLAN — déchiffrement des DVD (videolan.org)\n"
+            "• GNOME, GTK 4 et libadwaita — interface graphique (gnome.org)\n"
+            "• Fedora Project et RPM Fusion — distribution et paquets\n"
+            "• Python — langage de programmation (python.org)",
+        )
+        add_section(
+            "Licence",
+            "RipDvD est un logiciel libre distribué sous licence MIT. "
+            "Vous pouvez l'utiliser, le copier, le modifier et le redistribuer "
+            "librement, à condition de conserver la mention de copyright et la licence.",
+            "https://github.com/asblPixels/ripdvd/blob/main/LICENSE",
+            "Lire la licence MIT complète",
+        )
+        add_section(
+            "Vie privée",
+            "Aucune donnée personnelle n'est collectée, transmise ni vendue. "
+            "Tout le traitement se fait localement sur votre ordinateur : "
+            "l'application n'effectue aucune connexion réseau.",
+        )
+        add_section(
+            "Mentions légales",
+            "RipDvD est conçu pour sauvegarder des DVD que vous possédez légalement. "
+            "Le déchiffrement de disques protégés peut être interdit ou restreint "
+            "dans certains pays. Il vous appartient de vérifier la législation en vigueur. "
+            "Les auteurs ne sauraient être tenus responsables d'un usage illégal.",
+        )
+        add_section(
+            "Sources et support",
+            "Code source, documentation, wiki et signalement de bugs :\n"
+            f"Journal de débogage : {DEBUG_LOG}",
+            "https://github.com/asblPixels/ripdvd",
+            "github.com/asblPixels/ripdvd",
+        )
+
+        foot = Gtk.Label(label="© 2026 asblPixels — Tous droits réservés. Projet open source sous licence MIT.")
+        foot.add_css_class("caption")
+        foot.add_css_class("brand-caption")
+        foot.set_halign(Gtk.Align.CENTER)
+        foot.set_margin_top(18)
+        content.append(foot)
+
+        close = Gtk.Button(label="Fermer")
+        close.add_css_class("suggested-action")
+        close.add_css_class("pill")
+        close.set_halign(Gtk.Align.CENTER)
+        close.set_margin_top(10)
+        close.connect("clicked", lambda _b: about.close())
+        content.append(close)
+
+        about.present()
 
     def _update_progress(self, pct):
         self.progress.set_fraction(pct / 100.0)

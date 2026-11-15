@@ -534,25 +534,74 @@ class RipDvDWin(tk.Tk):
         self.destroy()
 
     def on_about(self):
-        msg = (
-            "RipDvD — Windows Edition\n"
-            "Version 1.1.0\n\n"
-            "From disc to digital — effortlessly.\n\n"
-            "One-click DVD ripper for Windows.\n"
-            "Wraps HandBrakeCLI to convert DVDs to MKV.\n\n"
-            "Created by asblPixels\n"
-            "https://github.com/asblPixels/ripdvd\n\n"
-            "License: MIT\n\n"
-            "Acknowledgements:\n"
-            "- HandBrake (handbrake.fr) — encoding engine\n"
-            "- libdvdcss (VideoLAN) — DVD decryption\n"
-            "- Python / tkinter — UI toolkit\n\n"
-            "Legal note:\n"
-            "This tool is for backing up DVDs you own.\n"
-            "Decrypting copy-protected discs may be restricted\n"
-            "in your country. Check your local laws."
+        win = tk.Toplevel(self)
+        win.title("About RipDvD")
+        win.geometry("640x660")
+        win.configure(bg="#ffffff")
+        win.transient(self)
+
+        header = tk.Frame(win, bg="#04302a", pady=14)
+        header.pack(fill=tk.X)
+        tk.Label(header, text="RipDvD", font=("Segoe UI", 20, "bold"),
+                 fg="#ffffff", bg="#04302a").pack()
+        tk.Label(header, text="Version 1.1.0 — From disc to digital, effortlessly",
+                 font=("Segoe UI", 10), fg="#8fe3d0", bg="#04302a").pack()
+        tk.Frame(win, bg="#00c9a0", height=3).pack(fill=tk.X)
+
+        txt = scrolledtext.ScrolledText(
+            win, wrap=tk.WORD, font=("Segoe UI", 10),
+            bg="#ffffff", fg="#1d1d1d", relief=tk.FLAT, padx=16, pady=12,
         )
-        messagebox.showinfo("About RipDvD", msg)
+        txt.pack(fill=tk.BOTH, expand=True)
+        txt.insert("1.0", (
+            "DEVELOPED BY asblPixels\n"
+            "RipDvD is a free and open-source project created and maintained by asblPixels.\n"
+            "https://github.com/asblPixels\n\n"
+            "ABOUT THE APP\n"
+            "RipDvD turns your DVDs into MKV files in one click. Pick the audio language\n"
+            "and subtitles, then start the rip: the movie is encoded in H.264 (RF 20),\n"
+            "at its native resolution, with its chapters, in %USERPROFILE%\\Videos\\Rips.\n\n"
+            "CREDITS & ACKNOWLEDGEMENTS\n"
+            "- HandBrake — encoding engine (handbrake.fr)\n"
+            "- libdvdcss / VideoLAN — DVD decryption (videolan.org)\n"
+            "- Python / tkinter — programming language & UI toolkit\n"
+            "- Microsoft Windows — operating system\n\n"
+            "LICENSE\n"
+            "RipDvD is free software released under the MIT License. You may use, copy,\n"
+            "modify and redistribute it freely, provided you keep the copyright notice\n"
+            "and the license text.\n\n"
+            "PRIVACY\n"
+            "No personal data is collected, transmitted or sold. Everything runs locally\n"
+            "on your computer; the app makes no network connection.\n\n"
+            "LEGAL NOTICE\n"
+            "RipDvD is intended to back up DVDs you legally own. Decrypting copy-protected\n"
+            "discs may be illegal or restricted in some countries. It is your responsibility\n"
+            "to check your local laws. The authors cannot be held liable for any illegal use.\n\n"
+            "SOURCES & SUPPORT\n"
+            "Source code, documentation and bug reports:\n"
+            "https://github.com/asblPixels/ripdvd\n"
+            "Debug log: %USERPROFILE%\\ripdvd-debug.log\n\n"
+            "© 2026 asblPixels — All rights reserved. Open-source project under MIT License."
+        ))
+        txt.config(state=tk.DISABLED)
+
+        def open_url(url):
+            import webbrowser
+            webbrowser.open(url)
+
+        bar = tk.Frame(win, bg="#ffffff", pady=8)
+        bar.pack(fill=tk.X)
+        tk.Button(bar, text="GitHub", font=("Segoe UI", 10, "bold"),
+                  bg="#00c9a0", fg="#04302a", relief=tk.FLAT, padx=10, pady=4,
+                  command=lambda: open_url("https://github.com/asblPixels/ripdvd")
+                  ).pack(side=tk.LEFT, padx=8)
+        tk.Button(bar, text="MIT License", font=("Segoe UI", 10),
+                  relief=tk.FLAT, padx=10, pady=4,
+                  command=lambda: open_url("https://github.com/asblPixels/ripdvd/blob/main/LICENSE")
+                  ).pack(side=tk.LEFT)
+        tk.Button(bar, text="Close", font=("Segoe UI", 10),
+                  relief=tk.FLAT, padx=10, pady=4, command=win.destroy
+                  ).pack(side=tk.RIGHT, padx=8)
 
     def _update_progress(self, pct):
         self.progress["value"] = pct
