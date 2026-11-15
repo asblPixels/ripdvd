@@ -25,6 +25,9 @@ chmod +x "$HOME/.local/bin/ripdvd-gui.py"
 sed "s|Exec=.*|Exec=python3 $HOME/.local/bin/ripdvd-gui.py|" \
     "$SRC_DIR/data/ripdvd.desktop" > "$HOME/.local/share/applications/ripdvd.desktop"
 
+mkdir -p "$HOME/.local/share/icons/hicolor/scalable/apps"
+cp "$SRC_DIR/data/ripdvd.svg" "$HOME/.local/share/icons/hicolor/scalable/apps/ripdvd.svg"
+gtk-update-icon-cache -f -t "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
 update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
 
 echo ""

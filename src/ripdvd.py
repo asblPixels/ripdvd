@@ -24,11 +24,52 @@ except ImportError:
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Gtk, Adw, GLib, Gio, Pango
+gi.require_version("Gdk", "4.0")
+from gi.repository import Gtk, Adw, GLib, Gio, Gdk, Pango
 
 APP_ID = "io.github.ripdvd"
 OUT_DIR = os.path.join(os.path.expanduser("~"), "Vidéos", "Rips")
 DEBUG_LOG = os.path.join(os.path.expanduser("~"), ".ripdvd-debug.log")
+
+# ---- Couleurs asblPixels : turquoise (#00C9A0) + encre (#04302A) ----
+THEME_CSS = b"""
+@define-color accent_color #00b894;
+@define-color accent_bg_color #00c9a0;
+@define-color accent_fg_color #04302a;
+
+.hero {
+    background-image: linear-gradient(135deg, #012e28 0%, #00a884 55%, #00e0b0 100%);
+    border-radius: 16px;
+    padding: 18px 16px 16px 16px;
+}
+.hero-title {
+    color: #ffffff;
+    font-weight: 800;
+}
+.hero-sub {
+    color: rgba(255, 255, 255, 0.85);
+}
+.brand-caption {
+    color: #00876c;
+}
+.card {
+    border-color: alpha(@accent_bg_color, 0.35);
+}
+progressbar > trough > progress {
+    background-image: linear-gradient(90deg, #00b894, #00e0b0);
+}
+"""
+
+
+def install_theme():
+    """Applique la palette asblPixels (turquoise) à l'application."""
+    css = Gtk.CssProvider()
+    css.load_from_data(THEME_CSS)
+    display = Gdk.Display.get_default()
+    if display is not None:
+        Gtk.StyleContext.add_provider_for_display(
+            display, css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
 
 
 def find_handbrake():
@@ -129,30 +170,26 @@ class RipdvdWindow(Adw.ApplicationWindow):
         box.set_margin_start(20)
         box.set_margin_end(20)
 
+        # ---- Hero banner aux couleurs asblPixels ----
+        hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        hero.add_css_class("hero")
+
         title = Gtk.Label(label="RipDvD")
         title.add_css_class("title-1")
-        title.set_margin_bottom(2)
-        box.append(title)
+        title.add_css_class("hero-title")
+        hero.append(title)
 
         subtitle = Gtk.Label(label="Du disque au numérique — sans effort.")
-        subtitle.add_css_class("dim-label")
-        subtitle.set_margin_bottom(6)
-        box.append(subtitle)
+        subtitle.add_css_class("hero-sub")
+        hero.append(subtitle)
 
-        # ---- Branding : asblPixels bien visible ----
-        brand_btn = Gtk.Button(label="asblPixels")
-        brand_btn.add_css_class("pill")
-        brand_btn.add_css_class("suggested-action")
-        brand_btn.set_halign(Gtk.Align.CENTER)
-        brand_btn.set_tooltip_text("RipDvD est développé par asblPixels — cliquez pour les crédits et la licence")
-        brand_btn.connect("clicked", self.on_about_clicked)
-        box.append(brand_btn)
+        box.append(hero)
 
         brand_caption = Gtk.Label(label="Un logiciel libre développé par asblPixels")
         brand_caption.add_css_class("caption")
-        brand_caption.add_css_class("dim-label")
+        brand_caption.add_css_class("brand-caption")
         brand_caption.set_halign(Gtk.Align.CENTER)
-        brand_caption.set_margin_top(4)
+        brand_caption.set_margin_top(6)
         brand_caption.set_margin_bottom(10)
         box.append(brand_caption)
 
@@ -729,6 +766,7 @@ class RipdvdApp(Adw.Application):
         super().__init__(application_id=APP_ID, flags=Gio.ApplicationFlags.FLAGS_NONE)
 
     def do_activate(self):
+        install_theme()
         win = RipdvdWindow(self)
         win.present()
 

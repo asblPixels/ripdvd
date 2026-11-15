@@ -112,6 +112,18 @@ class RipDvDWin(tk.Tk):
         self.resizable(True, True)
         self.configure(bg="#f0f0f0")
 
+        # ---- Couleurs asblPixels : turquoise (#00C9A0) + encre (#04302A) ----
+        style = ttk.Style(self)
+        try:
+            style.theme_use("clam")
+        except tk.TclError:
+            pass
+        style.configure(
+            "Teal.Horizontal.TProgressbar",
+            troughcolor="#d9f5ee", background="#00c9a0", bordercolor="#00c9a0",
+            lightcolor="#00c9a0", darkcolor="#00b08c",
+        )
+
         self.hb = find_handbrake()
         self.process = None
         self.encoding = False
@@ -137,13 +149,12 @@ class RipDvDWin(tk.Tk):
 
     def _build_ui(self):
         # Header
-        header = tk.Frame(self, bg="#0078d4", pady=12)
+        header = tk.Frame(self, bg="#04302a", pady=14)
         header.pack(fill=tk.X)
-        tk.Label(header, text="RipDvD", font=("Segoe UI", 20, "bold"), fg="white", bg="#0078d4").pack()
-        tk.Label(header, text="From disc to digital - effortlessly", font=("Segoe UI", 10), fg="#cce4ff", bg="#0078d4").pack()
-        brand = tk.Label(header, text="by asblPixels", font=("Segoe UI", 11, "bold"), fg="white", bg="#0078d4", cursor="hand2")
-        brand.pack()
-        brand.bind("<Button-1>", lambda _e: self.on_about())
+        tk.Label(header, text="RipDvD", font=("Segoe UI", 22, "bold"), fg="#ffffff", bg="#04302a").pack()
+        tk.Label(header, text="From disc to digital - effortlessly", font=("Segoe UI", 10), fg="#8fe3d0", bg="#04302a").pack()
+        tk.Label(header, text="by asblPixels", font=("Segoe UI", 10, "bold"), fg="#00e0b0", bg="#04302a").pack(pady=(2, 0))
+        tk.Frame(self, bg="#00c9a0", height=3).pack(fill=tk.X)
 
         # Status
         sf = tk.Frame(self, bg="#f0f0f0", pady=6)
@@ -160,7 +171,7 @@ class RipDvDWin(tk.Tk):
         self.drive_var = tk.StringVar(value=self.dvd_drive or "")
         self.drive_combo = ttk.Combobox(row, textvariable=self.drive_var, values=self.drives, width=10, font=("Segoe UI", 10))
         self.drive_combo.pack(side=tk.LEFT, padx=6)
-        tk.Button(row, text="  Scan  ", font=("Segoe UI", 10, "bold"), bg="#0078d4", fg="white", command=self.start_scan, relief=tk.FLAT, padx=8, pady=2).pack(side=tk.LEFT)
+        tk.Button(row, text="  Scan  ", font=("Segoe UI", 10, "bold"), bg="#00c9a0", fg="#04302a", activebackground="#00b08c", activeforeground="#04302a", command=self.start_scan, relief=tk.FLAT, padx=8, pady=2).pack(side=tk.LEFT)
 
         # Audio
         af = tk.LabelFrame(self, text=" Audio Language ", font=("Segoe UI", 10, "bold"), bg="#f0f0f0", padx=8, pady=6)
@@ -179,7 +190,7 @@ class RipDvDWin(tk.Tk):
         # Progress
         pf = tk.LabelFrame(self, text=" Progress ", font=("Segoe UI", 10, "bold"), bg="#f0f0f0", padx=8, pady=6)
         pf.pack(fill=tk.X, padx=12, pady=4)
-        self.progress = ttk.Progressbar(pf, mode="determinate", maximum=100)
+        self.progress = ttk.Progressbar(pf, mode="determinate", maximum=100, style="Teal.Horizontal.TProgressbar")
         self.progress.pack(fill=tk.X, pady=2)
         self.pct_var = tk.StringVar(value="0 %")
         tk.Label(pf, textvariable=self.pct_var, font=("Segoe UI", 10), bg="#f0f0f0").pack()
@@ -192,7 +203,7 @@ class RipDvDWin(tk.Tk):
         bf = tk.Frame(self, bg="#f0f0f0", pady=6)
         bf.pack(fill=tk.X, padx=12)
         btn_style = {"font": ("Segoe UI", 10, "bold"), "relief": tk.FLAT, "padx": 10, "pady": 4}
-        self.btn_rip = tk.Button(bf, text="  RIP DVD  ", bg="#28a745", fg="white", command=self.on_rip, **btn_style)
+        self.btn_rip = tk.Button(bf, text="  RIP DVD  ", bg="#00c9a0", fg="#04302a", command=self.on_rip, activebackground="#00b08c", activeforeground="#04302a", **btn_style)
         self.btn_rip.pack(side=tk.LEFT, padx=3)
         self.btn_stop = tk.Button(bf, text="  STOP  ", bg="#dc3545", fg="white", command=self.on_stop, state=tk.DISABLED, **btn_style)
         self.btn_stop.pack(side=tk.LEFT, padx=3)
@@ -213,7 +224,7 @@ class RipDvDWin(tk.Tk):
         tk.Button(lf, text="Clear Log", font=("Segoe UI", 9), command=lambda: self.log.delete("1.0", tk.END), relief=tk.FLAT).pack(pady=2)
 
         # Footer
-        footer = tk.Label(self, text="© 2026 asblPixels  |  MIT License  |  Open Source  |  github.com/asblPixels/ripdvd", font=("Segoe UI", 8, "bold"), fg="#0078d4", bg="#f0f0f0", cursor="hand2")
+        footer = tk.Label(self, text="© 2026 asblPixels  |  MIT License  |  Open Source  |  github.com/asblPixels/ripdvd", font=("Segoe UI", 8, "bold"), fg="#00876c", bg="#f0f0f0", cursor="hand2")
         footer.pack(side=tk.BOTTOM, pady=4)
         footer.bind("<Button-1>", lambda _e: self.on_about())
 
