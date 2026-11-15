@@ -558,7 +558,7 @@ class RipDvDWin(tk.Tk):
         header.pack(fill=tk.X)
         tk.Label(header, text="RipDvD", font=("Segoe UI", 20, "bold"),
                  fg="#ffffff", bg="#04302a").pack()
-        tk.Label(header, text="Version 1.1.0 — From disc to digital, effortlessly",
+        tk.Label(header, text="Version 1.2.0 — From disc to digital, effortlessly",
                  font=("Segoe UI", 10), fg="#8fe3d0", bg="#04302a").pack()
         tk.Frame(win, bg="#00c9a0", height=3).pack(fill=tk.X)
 

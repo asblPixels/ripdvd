@@ -44,6 +44,7 @@ It runs on **Fedora, Arch, Ubuntu, Debian** (Linux) and **Windows 10/11**.
 ## 🎯 Features
 
 - 🖱️ **One-click ripping** — insert a DVD, click *Rip DVD*, get a ready-to-stream MKV.
+- ⚡ **Instant scan** — only the main movie is analysed, no preview generation (3–10× faster).
 - 🔍 **Automatic title detection** — picks the longest title (the main movie) automatically.
 - 🌍 **Multi-language audio** — detects every audio track; French preferred by default, then English.
 - 💬 **Subtitles** — optional passthrough of any subtitle track (VobSub), or none.
@@ -55,7 +56,8 @@ It runs on **Fedora, Arch, Ubuntu, Debian** (Linux) and **Windows 10/11**.
 - 🚪 **Quit button** — close the app cleanly (stops any running encode first).
 - 🔄 **Rescan button** — re-analyse the disc without restarting the app.
 - 🧹 **Clear log** — clear the live output window.
-- 🎨 **Native GNOME look** — GTK4 + libadwaita, fits perfectly on Fedora Workstation.
+- 🎨 **Native GNOME look** — GTK4 + libadwaita, with the asblPixels turquoise identity.
+- ℹ️ **About window** — author, credits, license, privacy and legal notice in one place.
 - 🧵 **Thread-safe** — all UI updates marshalled to the GTK main thread.
 - 🐛 **Debug log** — full output saved to `~/.ripdvd-debug.log`.
 

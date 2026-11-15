@@ -13,6 +13,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configuration file
 - Multiple title queue
 
+## [1.2.0] - 2026-11-15
+
+### Added
+- One-line Linux installer (auto-detects Fedora, Arch, Ubuntu, Debian — and derivatives).
+- Double-click Windows installer (`install-windows.bat`).
+- Complete "About" window: author asblPixels, credits, MIT license, privacy, legal notice, support links.
+- asblPixels turquoise/ink visual identity, themed widgets, hero banner and application icon.
+- README in 6 languages and a 10-page wiki.
+- CI guard against the blank-window regression.
+- GitHub Copilot project instructions.
+
+### Changed
+- Instant scan: main feature only, no previews (`--main-feature --previews 0`), with full-scan fallback.
+- Faster encoding preset (`medium` → `fast`).
+- Encoding targets `--main-feature` instead of a title index.
+- Documentation presents the project as cross-platform (Linux + Windows).
+
+### Fixed
+- Blank white window (missing `self.set_content(box)`).
+- Removed the HandBrake source line from the main window.
+
+### Removed
+- Redundant "asblPixels" pill button from the main window.
+
 ## [1.1.0] - 2026-11-15
 
 ### Added

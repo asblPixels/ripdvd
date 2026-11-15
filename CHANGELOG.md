@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-15
+
+### Added
+- **One-line Linux installer** (`scripts/install-linux.sh`): detects Fedora, Arch/Manjaro, Ubuntu/Mint/Pop!_OS and Debian, then installs the right packages, the app, the icon and the menu entry automatically.
+- **One-click Windows installer** (`scripts/install-windows.bat`): double-click and follow the guide; checks Python and HandBrake, creates Desktop and Start Menu shortcuts.
+- **Complete "About" window** (Linux + Windows): author (asblPixels), credits, MIT license, privacy, legal notice and support links.
+- **asblPixels visual identity**: turquoise/ink theme, gradient hero banner, themed buttons, progress bar and a dedicated application icon (`data/ripdvd.svg`).
+- **Multilingual documentation**: README in English, French, Spanish, Russian, Chinese and Japanese, plus a 10-page wiki in `docs/wiki/`.
+- **CI regression guard** that fails the build if the GTK window stops setting its content (blank-window bug).
+- GitHub Copilot project instructions (`.github/copilot-instructions.md`).
+
+### Changed
+- **Instant scan**: only the main feature is analysed and previews are skipped (`--main-feature --previews 0`) — typically 3–10× faster, with automatic fallback to a full scan if needed.
+- **Faster encoding**: x264 preset `medium` → `fast` (visually identical on DVD sources, noticeably quicker on modest CPUs).
+- Encoding targets the main feature directly (`--main-feature`) instead of a title index.
+- READMEs present the app as fully cross-platform (Linux + Windows) with per-platform install steps.
+- Branches `arch`, `ubuntu`, `debian` and `windows` kept in sync with `main`.
+
+### Fixed
+- **Blank white window** caused by a missing `self.set_content(box)` call — fixed and covered by CI.
+- Removed the confusing HandBrake path/source line from the main window.
+
+### Removed
+- The redundant "asblPixels" pill button from the main window (branding now lives in the hero banner, the footer and the About window).
+
 ## [1.1.0] - 2026-11-15
 
 ### Added
