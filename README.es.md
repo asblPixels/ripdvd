@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎬 ripdvd
+# 🎬 RipDvD
 
-### Un clic. Un DVD. Un archivo MKV.
+### Del disco al digital — sin esfuerzo.
 
 **Un extractor de DVD minimalista y de código abierto para Linux (Fedora / GNOME)**
 
@@ -24,7 +24,7 @@
 
 ## 📖 Acerca de
 
-**ripdvd** es una aplicación gratuita y de código abierto para extraer DVD en Linux.
+**RipDvD** es una aplicación gratuita y de código abierto para extraer DVD en Linux.
 Proporciona una interfaz gráfica nativa de GNOME (GTK4 / libadwaita) sobre
 [HandBrakeCLI](https://handbrake.fr/), convirtiendo tu colección de DVD en archivos MKV
 de alta calidad listos para tu servidor multimedia (Jellyfin, Kodi, Plex).
@@ -36,7 +36,7 @@ de alta calidad listos para tu servidor multimedia (Jellyfin, Kodi, Plex).
 ### ✨ ¿Por qué ripdvd?
 
 La mayoría de los extractores de DVD en Linux son solo de línea de comandos, demasiado
-complejos o solo para Windows. ripdvd busca ser **la herramienta más simple posible**:
+complejos o solo para Windows. RipDvD busca ser **la herramienta más simple posible**:
 inserta un disco, haz clic en un botón, obtén un MKV perfecto. Sin configuración necesaria,
 pero con control total si lo deseas.
 
@@ -149,7 +149,7 @@ El instalador va a:
 python3 ~/.local/bin/ripdvd-gui.py
 ```
 
-O busca **ripdvd** en el menú de aplicaciones de GNOME.
+O busca **RipDvD** en el menú de aplicaciones de GNOME.
 
 ### Verificar que todo funciona
 
@@ -163,7 +163,7 @@ Ambos deben imprimir `OK`.
 ## 🎬 Uso
 
 1. Inserta un DVD en tu lector.
-2. Lanza **ripdvd** desde el menú de GNOME (o `python3 ~/.local/bin/ripdvd-gui.py`).
+2. Lanza **RipDvD** desde el menú de GNOME (o `python3 ~/.local/bin/ripdvd-gui.py`).
 3. La app escanea el disco automáticamente y detecta la película principal (título más largo).
 4. Elige el **idioma de audio** y los **subtítulos** opcionales en los menús desplegables.
 5. Haz clic en **Rip DVD**.
@@ -263,7 +263,7 @@ Este proyecto no existiría sin el increíble trabajo de:
 
 ## 👨‍💻 Creadores
 
-**ripdvd** es creado y mantenido por **[asblPixels](https://github.com/asblPixels)**
+**RipDvD** es creado y mantenido por **[asblPixels](https://github.com/asblPixels)**
 como parte de su iniciativa de software de código abierto.
 
 ¡Las contribuciones, reportes de bugs y solicitudes de funcionalidades son bienvenidas!

@@ -1,6 +1,6 @@
 # Configuration
 
-This page documents the settings, presets, and customization options for ripdvd.
+This page documents the settings, presets, and customization options for RipDvD.
 
 ## Default encoding profile
 

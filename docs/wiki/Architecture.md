@@ -1,10 +1,10 @@
 # Architecture
 
-This page documents the code structure and how ripdvd works internally.
+This page documents the code structure and how RipDvD works internally.
 
 ## Overview
 
-ripdvd is a Python application with a GUI frontend and a HandBrakeCLI backend. The architecture is simple:
+RipDvD is a Python application with a GUI frontend and a HandBrakeCLI backend. The architecture is simple:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -40,7 +40,7 @@ src/ripdvd-cli.sh      # Headless CLI ripper
 
 ## Key components
 
-### ripdvd.py (Linux)
+### RipDvD.py (Linux)
 
 #### Class: `RipdvdWindow(Adw.ApplicationWindow)`
 

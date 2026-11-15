@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""ripdvd-gui — One-click DVD ripper (GTK4/libadwaita, GNOME-native)."""
+"""RipDvD-gui — One-click DVD ripper (GTK4/libadwaita, GNOME-native)."""
 
 import os
 import re
@@ -17,7 +17,7 @@ except ImportError:
     msg = ("Module Python 'gi' manquant.\n"
            "Installez : sudo dnf install python3-gobject gtk4 libadwaita")
     try:
-        subprocess.run(["zenity", "--error", "--title=ripdvd", f"--text={msg}"])
+        subprocess.run(["zenity", "--error", "--title=RipDvD", f"--text={msg}"])
     except Exception:
         print(msg, file=sys.stderr)
     sys.exit(1)
@@ -108,7 +108,7 @@ def parse_tracks_for_title(text, target_title):
 
 class RipdvdWindow(Adw.ApplicationWindow):
     def __init__(self, app):
-        super().__init__(application=app, title="ripdvd")
+        super().__init__(application=app, title="RipDvD")
         self.set_default_size(500, 720)
         self.set_resizable(True)
 
@@ -129,12 +129,12 @@ class RipdvdWindow(Adw.ApplicationWindow):
         box.set_margin_start(20)
         box.set_margin_end(20)
 
-        title = Gtk.Label(label="ripdvd")
+        title = Gtk.Label(label="RipDvD")
         title.add_css_class("title-1")
         title.set_margin_bottom(2)
         box.append(title)
 
-        subtitle = Gtk.Label(label="Un clic. Un DVD. Un fichier MKV.")
+        subtitle = Gtk.Label(label="Du disque au numérique — sans effort.")
         subtitle.add_css_class("dim-label")
         subtitle.set_margin_bottom(10)
         box.append(subtitle)
@@ -626,7 +626,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.progress.set_text("100 %")
         self.out_label.set_label(f"{outfile}\n({size})")
         self._append_log(f"\n✅ Terminé : {outfile} ({size})\n")
-        notif = Gio.Notification.new("ripdvd")
+        notif = Gio.Notification.new("RipDvD")
         notif.set_body(f"Encodage terminé : {os.path.basename(outfile)} ({size})")
         self.get_application().send_notification("ripdvd-done", notif)
 

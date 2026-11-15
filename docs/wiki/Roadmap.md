@@ -1,6 +1,6 @@
 # Roadmap
 
-This page outlines planned features and improvements for ripdvd.
+This page outlines planned features and improvements for RipDvD.
 
 ## v1.2.0 (planned)
 
@@ -33,7 +33,7 @@ This page outlines planned features and improvements for ripdvd.
 - [ ] **Plugin system** — Allow third-party plugins for custom workflows.
 - [ ] **Web interface** — Optional web-based control panel.
 - [ ] **Remote encoding** — Offload encoding to a remote machine.
-- [ ] **Docker support** — Run ripdvd in a container.
+- [ ] **Docker support** — Run RipDvD in a container.
 - [ ] **macOS support** — Port to macOS.
 
 ## Community requests

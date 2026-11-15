@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎬 ripdvd
+# 🎬 RipDvD
 
-### One click. One DVD. One MKV file.
+### From disc to digital — effortlessly.
 
 **A minimalist, open-source DVD ripper for Linux (Fedora / GNOME)**
 
@@ -25,7 +25,7 @@
 
 ## 📖 About
 
-**ripdvd** is a free, open-source, minimalist DVD ripping application built for Linux.
+**RipDvD** is a free, open-source, minimalist DVD ripping application built for Linux.
 It provides a clean, native GNOME (GTK4 / libadwaita) graphical interface on top of
 [HandBrakeCLI](https://handbrake.fr/), turning your DVD collection into high-quality
 MKV files ready for your home media server (Jellyfin, Kodi, Plex).
@@ -37,7 +37,7 @@ MKV files ready for your home media server (Jellyfin, Kodi, Plex).
 ### ✨ Why ripdvd?
 
 Most DVD rippers on Linux are either command-line only, overly complex, or Windows-only.
-ripdvd aims to be **the simplest possible tool**: insert a disc, click one button,
+RipDvD aims to be **the simplest possible tool**: insert a disc, click one button,
 get a perfect MKV. No configuration required, but full control when you want it.
 
 ## 🎯 Features
@@ -149,7 +149,7 @@ The installer will:
 python3 ~/.local/bin/ripdvd-gui.py
 ```
 
-Or search for **ripdvd** in the GNOME application menu.
+Or search for **RipDvD** in the GNOME application menu.
 
 ### Windows
 
@@ -194,7 +194,7 @@ The installer will:
 
 #### Step 4 — Launch
 
-Double-click the **ripdvd** shortcut on your Desktop, or search for **ripdvd** in the Start Menu.
+Double-click the **RipDvD** shortcut on your Desktop, or search for **RipDvD** in the Start Menu.
 
 Or from PowerShell:
 ```powershell
@@ -223,7 +223,7 @@ Get-Command HandBrakeCLI
 ## 🎬 Usage
 
 1. Insert a DVD into your drive.
-2. Launch **ripdvd** from the GNOME application menu (or `python3 ~/.local/bin/ripdvd-gui.py`).
+2. Launch **RipDvD** from the GNOME application menu (or `python3 ~/.local/bin/ripdvd-gui.py`).
 3. The app scans the disc automatically and detects the main movie (longest title).
 4. Pick the **audio language** and optional **subtitles** from the dropdowns.
 5. Click **Rip DVD**.
@@ -324,7 +324,7 @@ This project would not exist without the incredible work of:
 
 ## 👨‍💻 Creators
 
-**ripdvd** is created and maintained by **[asblPixels](https://github.com/asblPixels)**
+**RipDvD** is created and maintained by **[asblPixels](https://github.com/asblPixels)**
 as part of its open-source software initiative.
 
 Contributions, bug reports and feature requests are welcome!

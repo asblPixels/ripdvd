@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎬 ripdvd
+# 🎬 RipDvD
 
-### Un clic. Un DVD. Un fichier MKV.
+### Du disque au numérique — sans effort.
 
 **Un rippeur de DVD minimaliste et open source pour Linux (Fedora / GNOME)**
 
@@ -24,7 +24,7 @@
 
 ## 📖 À propos
 
-**ripdvd** est une application gratuite et open source de rippage de DVD pour Linux.
+**RipDvD** est une application gratuite et open source de rippage de DVD pour Linux.
 Elle offre une interface graphique GNOME native (GTK4 / libadwaita) par-dessus
 [HandBrakeCLI](https://handbrake.fr/), transformant votre collection de DVD en fichiers MKV
 de haute qualité prêts pour votre serveur multimédia (Jellyfin, Kodi, Plex).
@@ -36,7 +36,7 @@ de haute qualité prêts pour votre serveur multimédia (Jellyfin, Kodi, Plex).
 ### ✨ Pourquoi ripdvd ?
 
 La plupart des rippeurs de DVD sous Linux sont soit en ligne de commande uniquement, soit trop
-complexes, soit réservés à Windows. ripdvd vise à être **l'outil le plus simple possible** :
+complexes, soit réservés à Windows. RipDvD vise à être **l'outil le plus simple possible** :
 insérez un disque, cliquez sur un bouton, obtenez un MKV parfait. Aucune configuration requise,
 mais un contrôle total si vous le souhaitez.
 
@@ -149,7 +149,7 @@ L'installateur va :
 python3 ~/.local/bin/ripdvd-gui.py
 ```
 
-Ou cherchez **ripdvd** dans le menu d'applications GNOME.
+Ou cherchez **RipDvD** dans le menu d'applications GNOME.
 
 ### Windows
 
@@ -194,7 +194,7 @@ L'installateur va :
 
 #### Étape 4 — Lancer
 
-Double-cliquez sur le raccourci **ripdvd** sur le Bureau, ou cherchez **ripdvd** dans le menu Démarrer.
+Double-cliquez sur le raccourci **RipDvD** sur le Bureau, ou cherchez **RipDvD** dans le menu Démarrer.
 
 Ou depuis PowerShell :
 ```powershell
@@ -225,7 +225,7 @@ Les deux doivent afficher `OK`.
 ## 🎬 Utilisation
 
 1. Insérez un DVD dans votre lecteur.
-2. Lancez **ripdvd** depuis le menu GNOME (ou `python3 ~/.local/bin/ripdvd-gui.py`).
+2. Lancez **RipDvD** depuis le menu GNOME (ou `python3 ~/.local/bin/ripdvd-gui.py`).
 3. L'application scanne le disque automatiquement et détecte le film principal (titre le plus long).
 4. Choisissez la **langue audio** et les **sous-titres** optionnels dans les listes déroulantes.
 5. Cliquez sur **Rip DVD**.
@@ -325,7 +325,7 @@ Ce projet n'existerait pas sans le travail incroyable de :
 
 ## 👨‍💻 Créateurs
 
-**ripdvd** est créé et maintenu par **[asblPixels](https://github.com/asblPixels)**
+**RipDvD** est créé et maintenu par **[asblPixels](https://github.com/asblPixels)**
 dans le cadre de son initiative logicielle open source.
 
 Les contributions, rapports de bugs et demandes de fonctionnalités sont les bienvenus !

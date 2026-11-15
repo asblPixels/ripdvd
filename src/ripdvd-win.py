@@ -17,7 +17,7 @@ except ImportError:
     print("tkinter not available. Install Python with tkinter support.", file=sys.stderr)
     sys.exit(1)
 
-APP_TITLE = "ripdvd (Windows)"
+APP_TITLE = "RipDvD (Windows)"
 OUT_DIR = os.path.join(os.path.expanduser("~"), "Videos", "Rips")
 DEBUG_LOG = os.path.join(os.path.expanduser("~"), "ripdvd-debug.log")
 
@@ -150,7 +150,7 @@ class RipdvdWin(tk.Tk):
 
     def _build_ui(self):
         # Top frame
-        top = tk.Frame(self, text="ripdvd — Windows Edition", padx=10, pady=10)
+        top = tk.Frame(self, text="RipDvD — Windows Edition", padx=10, pady=10)
         top.pack(fill=tk.X, padx=10, pady=10)
 
         self.status_var = tk.StringVar(value="Ready")
@@ -533,7 +533,7 @@ class RipdvdWin(tk.Tk):
         self.pct_var.set("100 %")
         self.out_var.set(f"{outfile}\n({size})")
         self._log(f"\n✅ Done: {outfile} ({size})\n")
-        messagebox.showinfo("ripdvd", f"Encoding complete:\n{outfile}\n({size})")
+        messagebox.showinfo("RipDvD", f"Encoding complete:\n{outfile}\n({size})")
 
     def _encode_failed(self, msg):
         self.encoding = False

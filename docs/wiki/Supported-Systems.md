@@ -1,6 +1,6 @@
 # Supported Systems
 
-This page documents the compatibility matrix for ripdvd across different systems.
+This page documents the compatibility matrix for RipDvD across different systems.
 
 ## Operating systems
 

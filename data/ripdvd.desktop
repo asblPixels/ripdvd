@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=ripdvd
+Name=RipDvD
 Comment=One-click DVD ripper (MKV H.264)
 Exec=python3 /home/pixels/.local/bin/ripdvd-gui.py
 Icon=media-optical

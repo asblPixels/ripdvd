@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎬 ripdvd
+# 🎬 RipDvD
 
-### ワンクリック。一枚の DVD。一つの MKV ファイル。
+### ディスクからデジタルへ — 手軽に。
 
 **Linux (Fedora / GNOME) 向けのミニマリストなオープンソース DVD リッピングツール**
 
@@ -24,7 +24,7 @@
 
 ## 📖 概要
 
-**ripdvd** は Linux 向けの無料オープンソース DVD リッピングアプリケーションです。
+**RipDvD** は Linux 向けの無料オープンソース DVD リッピングアプリケーションです。
 [HandBrakeCLI](https://handbrake.fr/) の上にネイティブな GNOME グラフィカルインターフェース（GTK4 / libadwaita）を提供し、
 DVD コレクションを高品質な MKV ファイルに変換してホームメディアサーバー（Jellyfin、Kodi、Plex）で利用できます。
 
@@ -35,7 +35,7 @@ DVD コレクションを高品質な MKV ファイルに変換してホーム�
 ### ✨ なぜ ripdvd なのか？
 
 Linux のほとんどの DVD リッピングツールはコマンドラインのみ、複雑すぎる、または Windows 専用です。
-ripdvd は **可能な限りシンプルなツール**を目指しています：ディスクを挿入し、ボタンをクリックし、
+RipDvD は **可能な限りシンプルなツール**を目指しています：ディスクを挿入し、ボタンをクリックし、
 完璧な MKV を取得。設定不要ですが、必要に応じて完全な制御も可能です。
 
 ## 🎯 機能
@@ -147,7 +147,7 @@ bash scripts/install.sh
 python3 ~/.local/bin/ripdvd-gui.py
 ```
 
-または GNOME アプリケーションメニューで **ripdvd** を検索。
+または GNOME アプリケーションメニューで **RipDvD** を検索。
 
 ### 動作確認
 
@@ -161,7 +161,7 @@ command -v HandBrakeCLI && echo "HandBrakeCLI OK"
 ## 🎬 使い方
 
 1. DVD をドライブに挿入。
-2. GNOME アプリケーションメニューから **ripdvd** を起動（または `python3 ~/.local/bin/ripdvd-gui.py`）。
+2. GNOME アプリケーションメニューから **RipDvD** を起動（または `python3 ~/.local/bin/ripdvd-gui.py`）。
 3. アプリが自動的にディスクをスキャンし、メイン映画（最長のタイトル）を検出。
 4. ドロップダウンから **オーディオ言語** とオプションの **字幕** を選択。
 5. **Rip DVD** をクリック。
@@ -261,7 +261,7 @@ sudo dnf install libdvdcss
 
 ## 👨‍💻 作成者
 
-**ripdvd** は **[asblPixels](https://github.com/asblPixels)** によって
+**RipDvD** は **[asblPixels](https://github.com/asblPixels)** によって
 オープンソースソフトウェアイニシアティブの一環として作成・維持されています。
 
 貢献、バグ報告、機能リクエストを歓迎します！

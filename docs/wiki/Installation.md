@@ -4,7 +4,7 @@ This page provides detailed installation instructions for all supported systems.
 
 ## Prerequisites
 
-Before installing ripdvd, ensure you have:
+Before installing RipDvD, ensure you have:
 
 - A DVD drive (internal or USB)
 - An internet connection
@@ -39,7 +39,7 @@ bash scripts/install.sh
 python3 ~/.local/bin/ripdvd-gui.py
 ```
 
-Or search for **ripdvd** in the GNOME application menu.
+Or search for **RipDvD** in the GNOME application menu.
 
 ---
 
@@ -149,7 +149,7 @@ Make sure to check **"Add Python to PATH"** during installation.
 Download HandBrake for Windows from https://handbrake.fr/downloads.php
 Install it (default location is fine).
 
-### Step 3 — Download ripdvd
+### Step 3 — Download RipDvD
 
 ```powershell
 git clone -b windows https://github.com/asblPixels/ripdvd.git
@@ -175,7 +175,7 @@ The installer will:
 
 ### Step 5 — Launch
 
-Double-click the **ripdvd** shortcut on your Desktop, or search for **ripdvd** in the Start Menu.
+Double-click the **RipDvD** shortcut on your Desktop, or search for **RipDvD** in the Start Menu.
 
 ## Verification
 

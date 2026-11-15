@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for considering contributing to ripdvd! 🎉
+Thank you for considering contributing to RipDvD! 🎉
 
 ## How to contribute
 
@@ -99,7 +99,7 @@ python src/ripdvd-win.py
 
 ## Testing
 
-Currently, ripdvd does not have automated tests. Contributions adding tests are welcome!
+Currently, RipDvD does not have automated tests. Contributions adding tests are welcome!
 
 Manual testing checklist:
 - [ ] App launches without errors

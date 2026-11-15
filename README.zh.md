@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🎬 ripdvd
+# 🎬 RipDvD
 
-### 一键。一张 DVD。一个 MKV 文件。
+### 从光盘到数字 — 轻松无忧。
 
 **面向 Linux (Fedora / GNOME) 的极简开源 DVD 提取工具**
 
@@ -24,7 +24,7 @@
 
 ## 📖 关于
 
-**ripdvd** 是一款免费、开源的 Linux DVD 提取应用程序。
+**RipDvD** 是一款免费、开源的 Linux DVD 提取应用程序。
 它在 [HandBrakeCLI](https://handbrake.fr/) 之上提供原生的 GNOME 图形界面（GTK4 / libadwaita），
 将您的 DVD 收藏转换为高质量的 MKV 文件，适用于家庭媒体服务器（Jellyfin、Kodi、Plex）。
 
@@ -35,7 +35,7 @@
 ### ✨ 为什么选择 ripdvd？
 
 Linux 上的大多数 DVD 提取工具要么仅支持命令行，要么过于复杂，要么仅限 Windows。
-ripdvd 的目标是成为 **尽可能简单的工具**：插入光盘，点击一个按钮，获得完美的 MKV。
+RipDvD 的目标是成为 **尽可能简单的工具**：插入光盘，点击一个按钮，获得完美的 MKV。
 无需配置，但需要时提供完全控制。
 
 ## 🎯 功能
@@ -147,7 +147,7 @@ bash scripts/install.sh
 python3 ~/.local/bin/ripdvd-gui.py
 ```
 
-或在 GNOME 应用程序菜单中搜索 **ripdvd**。
+或在 GNOME 应用程序菜单中搜索 **RipDvD**。
 
 ### 验证一切正常
 
@@ -161,7 +161,7 @@ command -v HandBrakeCLI && echo "HandBrakeCLI OK"
 ## 🎬 使用
 
 1. 将 DVD 插入光驱。
-2. 从 GNOME 应用程序菜单启动 **ripdvd** (或 `python3 ~/.local/bin/ripdvd-gui.py`)。
+2. 从 GNOME 应用程序菜单启动 **RipDvD** (或 `python3 ~/.local/bin/ripdvd-gui.py`)。
 3. 应用程序自动扫描光盘并检测主电影 (最长标题)。
 4. 从下拉菜单中选择 **音频语言** 和可选的 **字幕**。
 5. 点击 **Rip DVD**。
@@ -261,7 +261,7 @@ sudo dnf install libdvdcss
 
 ## 👨‍💻 创建者
 
-**ripdvd** 由 **[asblPixels](https://github.com/asblPixels)** 创建和维护，
+**RipDvD** 由 **[asblPixels](https://github.com/asblPixels)** 创建和维护，
 作为其开源软件计划的一部分。
 
 欢迎贡献、错误报告和功能请求！

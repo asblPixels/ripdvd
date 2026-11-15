@@ -1,6 +1,6 @@
-# Welcome to the ripdvd Wiki
+# Welcome to the RipDvD Wiki
 
-**ripdvd** is a free, open-source, minimalist DVD ripper for Linux.
+**RipDvD** is a free, open-source, minimalist DVD ripper for Linux.
 It provides a clean, native GNOME (GTK4 / libadwaita) graphical interface on top of
 [HandBrakeCLI](https://handbrake.fr/), turning your DVD collection into high-quality
 MKV files ready for your home media server (Jellyfin, Kodi, Plex).
@@ -11,7 +11,7 @@ MKV files ready for your home media server (Jellyfin, Kodi, Plex).
 |---|---|
 | [Home](Home) | Project overview and quick links |
 | [Installation](Installation) | Step-by-step install for all supported systems |
-| [Usage](Usage) | How to use ripdvd |
+| [Usage](Usage) | How to use RipDvD |
 | [Configuration](Configuration) | Settings, presets, and customization |
 | [Supported Systems](Supported-Systems) | Compatibility matrix |
 | [Troubleshooting](Troubleshooting) | FAQ and common issues |

@@ -5,14 +5,14 @@ This page explains how to use ripdvd from start to finish.
 ## Before you start
 
 1. Insert a DVD into your optical drive.
-2. Launch ripdvd (from the application menu or command line).
+2. Launch RipDvD (from the application menu or command line).
 3. Wait for the automatic scan to complete.
 
 ## Main workflow
 
 ### 1. Automatic scan
 
-When you launch ripdvd with a DVD inserted, it automatically:
+When you launch RipDvD with a DVD inserted, it automatically:
 
 1. Detects the DVD drive (`/dev/sr0` on Linux, drive letter on Windows).
 2. Scans all titles on the disc.
@@ -125,4 +125,4 @@ For resumed encodes: `DVD_YYYYMMDD_HHMMSS_resume.mkv`
 
 ## Keyboard shortcuts
 
-Currently, ripdvd does not have keyboard shortcuts. This is planned for a future release.
+Currently, RipDvD does not have keyboard shortcuts. This is planned for a future release.
