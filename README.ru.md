@@ -214,6 +214,11 @@ ripdvd/
 └── .gitignore
 ```
 
+
+### Windows
+
+Для Windows 10/11 скачайте ZIP с https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip, распакуйте и дважды щёлкните `install-windows.bat`. Технические знания не требуются.
+
 ## 🐛 Устранение неполадок
 
 ### Приложение не запускается — `ModuleNotFoundError: No module named 'gi'`

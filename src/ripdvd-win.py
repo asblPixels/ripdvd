@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""ripdvd-win — Windows port of ripdvd (tkinter, no GTK dependency)."""
+"""RipDvD — Windows Edition. Simple DVD ripper for everyone."""
 
 import os
 import re
@@ -12,22 +12,19 @@ from datetime import datetime
 
 try:
     import tkinter as tk
-    from tkinter import ttk, scrolledtext, messagebox, filedialog
+    from tkinter import ttk, scrolledtext, messagebox
 except ImportError:
-    print("tkinter not available. Install Python with tkinter support.", file=sys.stderr)
+    print("tkinter not available. Please reinstall Python.", file=sys.stderr)
     sys.exit(1)
 
-APP_TITLE = "RipDvD (Windows)"
+APP_TITLE = "RipDvD"
 OUT_DIR = os.path.join(os.path.expanduser("~"), "Videos", "Rips")
 DEBUG_LOG = os.path.join(os.path.expanduser("~"), "ripdvd-debug.log")
 
 
 def find_handbrake():
-    """Locate HandBrakeCLI.exe on Windows."""
-    # Check PATH
     if shutil.which("HandBrakeCLI") or shutil.which("HandBrakeCLI.exe"):
         return ["HandBrakeCLI"]
-    # Common install locations
     candidates = [
         r"C:\Program Files\HandBrake\HandBrakeCLI.exe",
         r"C:\Program Files (x86)\HandBrake\HandBrakeCLI.exe",
@@ -40,7 +37,6 @@ def find_handbrake():
 
 
 def detect_dvd_drives():
-    """Return list of CD/DVD drive letters on Windows."""
     drives = []
     try:
         import ctypes
@@ -48,18 +44,15 @@ def detect_dvd_drives():
         for i in range(26):
             if bitmask & (1 << i):
                 letter = chr(65 + i) + ":\\"
-                # Check drive type: 5 = CD-ROM
-                dtype = ctypes.windll.kernel32.GetDriveTypeW(letter)
-                if dtype == 5:
+                if ctypes.windll.kernel32.GetDriveTypeW(letter) == 5:
                     drives.append(letter)
     except Exception:
         pass
-    # Fallback: try D: through Z:
     if not drives:
         for letter in "DEFGHIJKLMNOPQRSTUVWXYZ":
-            path = letter + ":\\"
-            if os.path.exists(path):
-                drives.append(path)
+            p = letter + ":\\"
+            if os.path.exists(p):
+                drives.append(p)
     return drives
 
 
@@ -80,50 +73,44 @@ def parse_title_scan(text):
 
 
 def parse_tracks_for_title(text, target_title):
-    audio = []
-    subs = []
+    audio, subs = [], []
     current_title = None
-    cur_audio = None
-    cur_sub = None
+    cur_audio = cur_sub = None
     for line in text.splitlines():
         m = re.search(r"scanning title (\d+)", line)
         if m:
             current_title = int(m.group(1))
-            cur_audio = None
-            cur_sub = None
+            cur_audio = cur_sub = None
             continue
         if current_title != target_title:
             continue
         m = re.search(r"checking audio (\d+)", line)
         if m:
-            cur_audio = int(m.group(1))
-            cur_sub = None
-            continue
+            cur_audio = int(m.group(1)); cur_sub = None; continue
         m = re.search(r"checking subtitle (\d+)", line)
         if m:
-            cur_sub = int(m.group(1))
-            cur_audio = None
-            continue
+            cur_sub = int(m.group(1)); cur_audio = None; continue
         m = re.search(r"id=0x[0-9a-f]+,\s*lang=(.+?)(?:,|\s*$)", line)
         if m:
             lang = m.group(1).strip()
             if cur_audio is not None and not any(a[0] == cur_audio for a in audio):
-                audio.append((cur_audio, f"Track {cur_audio} — {lang}"))
+                audio.append((cur_audio, f"Track {cur_audio} - {lang}"))
                 cur_audio = None
             elif cur_sub is not None and not any(s[0] == cur_sub for s in subs):
-                subs.append((cur_sub, f"Track {cur_sub} — {lang}"))
+                subs.append((cur_sub, f"Track {cur_sub} - {lang}"))
                 cur_sub = None
     if not audio:
-        audio = [(1, "Track 1 — (unknown)")]
+        audio = [(1, "Track 1 - (unknown)")]
     return audio, subs
 
 
-class RipdvdWin(tk.Tk):
+class RipDvDWin(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(APP_TITLE)
-        self.geometry("520x620")
+        self.geometry("560x680")
         self.resizable(True, True)
+        self.configure(bg="#f0f0f0")
 
         self.hb = find_handbrake()
         self.process = None
@@ -134,102 +121,114 @@ class RipdvdWin(tk.Tk):
         self.best_title = 1
         self.best_dur_min = 0
         self.last_encode_params = None
-        self.dvd_drive = None
 
         self.drives = detect_dvd_drives()
-        if self.drives:
-            self.dvd_drive = self.drives[0]
+        self.dvd_drive = self.drives[0] if self.drives else None
 
         self._build_ui()
 
-        if self.dvd_drive:
-            self.status_var.set(f"Drive detected: {self.dvd_drive}. Scanning…")
+        if self.hb is None:
+            self.after(200, self._show_setup_wizard)
+        elif self.dvd_drive:
+            self.status_var.set("DVD drive found. Scanning...")
             self.after(100, self.start_scan)
         else:
-            self.status_var.set("No DVD drive detected. Enter drive letter and scan.")
+            self.status_var.set("No DVD drive found. Select one and click Scan.")
 
     def _build_ui(self):
-        # Top frame
-        top = tk.Frame(self, text="RipDvD — Windows Edition", padx=10, pady=10)
-        top.pack(fill=tk.X, padx=10, pady=10)
+        # Header
+        header = tk.Frame(self, bg="#0078d4", pady=12)
+        header.pack(fill=tk.X)
+        tk.Label(header, text="RipDvD", font=("Segoe UI", 20, "bold"), fg="white", bg="#0078d4").pack()
+        tk.Label(header, text="From disc to digital - effortlessly", font=("Segoe UI", 10), fg="#cce4ff", bg="#0078d4").pack()
 
+        # Status
+        sf = tk.Frame(self, bg="#f0f0f0", pady=6)
+        sf.pack(fill=tk.X, padx=12)
         self.status_var = tk.StringVar(value="Ready")
-        tk.Label(top, textvariable=self.status_var, wraplength=480, fg="gray").pack()
+        tk.Label(sf, textvariable=self.status_var, font=("Segoe UI", 11), fg="#333", bg="#f0f0f0", wraplength=520).pack()
 
-        # Drive selection
-        drive_frame = tk.Frame(self, text="DVD Drive", padx=10, pady=5)
-        drive_frame.pack(fill=tk.X, padx=10, pady=5)
-        df = tk.Frame(drive_frame)
-        df.pack(fill=tk.X)
-        tk.Label(df, text="Drive:").pack(side=tk.LEFT)
+        # Drive
+        df = tk.LabelFrame(self, text=" DVD Drive ", font=("Segoe UI", 10, "bold"), bg="#f0f0f0", padx=8, pady=6)
+        df.pack(fill=tk.X, padx=12, pady=4)
+        row = tk.Frame(df, bg="#f0f0f0")
+        row.pack(fill=tk.X)
+        tk.Label(row, text="Drive:", font=("Segoe UI", 10), bg="#f0f0f0").pack(side=tk.LEFT)
         self.drive_var = tk.StringVar(value=self.dvd_drive or "")
-        self.drive_combo = ttk.Combobox(df, textvariable=self.drive_var, values=self.drives, width=12)
-        self.drive_combo.pack(side=tk.LEFT, padx=5)
-        tk.Button(df, text="Scan", command=self.start_scan).pack(side=tk.LEFT, padx=5)
+        self.drive_combo = ttk.Combobox(row, textvariable=self.drive_var, values=self.drives, width=10, font=("Segoe UI", 10))
+        self.drive_combo.pack(side=tk.LEFT, padx=6)
+        tk.Button(row, text="  Scan  ", font=("Segoe UI", 10, "bold"), bg="#0078d4", fg="white", command=self.start_scan, relief=tk.FLAT, padx=8, pady=2).pack(side=tk.LEFT)
 
         # Audio
-        audio_frame = tk.Frame(self, text="Audio language", padx=10, pady=5)
-        audio_frame.pack(fill=tk.X, padx=10, pady=5)
+        af = tk.LabelFrame(self, text=" Audio Language ", font=("Segoe UI", 10, "bold"), bg="#f0f0f0", padx=8, pady=6)
+        af.pack(fill=tk.X, padx=12, pady=4)
         self.audio_var = tk.StringVar(value="(scan required)")
-        self.audio_combo = ttk.Combobox(audio_frame, textvariable=self.audio_var, state="readonly", width=40)
+        self.audio_combo = ttk.Combobox(af, textvariable=self.audio_var, state="readonly", font=("Segoe UI", 10))
         self.audio_combo.pack(fill=tk.X)
 
         # Subtitles
-        sub_frame = tk.Frame(self, text="Subtitles", padx=10, pady=5)
-        sub_frame.pack(fill=tk.X, padx=10, pady=5)
+        sf2 = tk.LabelFrame(self, text=" Subtitles ", font=("Segoe UI", 10, "bold"), bg="#f0f0f0", padx=8, pady=6)
+        sf2.pack(fill=tk.X, padx=12, pady=4)
         self.sub_var = tk.StringVar(value="None")
-        self.sub_combo = ttk.Combobox(sub_frame, textvariable=self.sub_var, state="readonly", width=40)
+        self.sub_combo = ttk.Combobox(sf2, textvariable=self.sub_var, state="readonly", font=("Segoe UI", 10))
         self.sub_combo.pack(fill=tk.X)
 
         # Progress
-        prog_frame = tk.Frame(self, text="Progress", padx=10, pady=5)
-        prog_frame.pack(fill=tk.X, padx=10, pady=5)
-        self.progress = ttk.Progressbar(prog_frame, mode="determinate", maximum=100)
-        self.progress.pack(fill=tk.X)
+        pf = tk.LabelFrame(self, text=" Progress ", font=("Segoe UI", 10, "bold"), bg="#f0f0f0", padx=8, pady=6)
+        pf.pack(fill=tk.X, padx=12, pady=4)
+        self.progress = ttk.Progressbar(pf, mode="determinate", maximum=100)
+        self.progress.pack(fill=tk.X, pady=2)
         self.pct_var = tk.StringVar(value="0 %")
-        tk.Label(prog_frame, textvariable=self.pct_var).pack()
-
-        # Buttons
-        btn_frame = tk.Frame(self, padx=10, pady=5)
-        btn_frame.pack(fill=tk.X, padx=10, pady=5)
-        self.btn_rip = tk.Button(btn_frame, text="Rip DVD", bg="#0078d4", fg="white", command=self.on_rip)
-        self.btn_rip.pack(side=tk.LEFT, padx=3)
-        self.btn_stop = tk.Button(btn_frame, text="Stop", bg="#d32f2f", fg="white", command=self.on_stop, state=tk.DISABLED)
-        self.btn_stop.pack(side=tk.LEFT, padx=3)
-        self.btn_resume = tk.Button(btn_frame, text="Resume", command=self.on_resume, state=tk.DISABLED)
-        self.btn_resume.pack(side=tk.LEFT, padx=3)
-        self.btn_rescan = tk.Button(btn_frame, text="Rescan", command=self.start_scan)
-        self.btn_rescan.pack(side=tk.LEFT, padx=3)
-        self.btn_quit = tk.Button(btn_frame, text="Quit", command=self.on_quit)
-        self.btn_quit.pack(side=tk.RIGHT, padx=3)
+        tk.Label(pf, textvariable=self.pct_var, font=("Segoe UI", 10), bg="#f0f0f0").pack()
 
         # Output
         self.out_var = tk.StringVar(value="")
-        tk.Label(self, textvariable=self.out_var, wraplength=480, fg="gray").pack(padx=10, pady=5)
+        tk.Label(self, textvariable=self.out_var, font=("Segoe UI", 9), fg="#555", bg="#f0f0f0", wraplength=520).pack(padx=12, pady=2)
+
+        # Buttons
+        bf = tk.Frame(self, bg="#f0f0f0", pady=6)
+        bf.pack(fill=tk.X, padx=12)
+        btn_style = {"font": ("Segoe UI", 10, "bold"), "relief": tk.FLAT, "padx": 10, "pady": 4}
+        self.btn_rip = tk.Button(bf, text="  RIP DVD  ", bg="#28a745", fg="white", command=self.on_rip, **btn_style)
+        self.btn_rip.pack(side=tk.LEFT, padx=3)
+        self.btn_stop = tk.Button(bf, text="  STOP  ", bg="#dc3545", fg="white", command=self.on_stop, state=tk.DISABLED, **btn_style)
+        self.btn_stop.pack(side=tk.LEFT, padx=3)
+        self.btn_resume = tk.Button(bf, text="Resume", command=self.on_resume, state=tk.DISABLED, **btn_style)
+        self.btn_resume.pack(side=tk.LEFT, padx=3)
+        self.btn_rescan = tk.Button(bf, text="Rescan", command=self.start_scan, **btn_style)
+        self.btn_rescan.pack(side=tk.LEFT, padx=3)
+        self.btn_quit = tk.Button(bf, text="Quit", command=self.on_quit, **btn_style)
+        self.btn_quit.pack(side=tk.RIGHT, padx=3)
 
         # Live log
-        log_frame = tk.Frame(self, text="Live output", padx=5, pady=5)
-        log_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
-        self.log = scrolledtext.ScrolledText(log_frame, height=12, font=("Consolas", 9))
-        self.log.pack(fill=tk.BOTH, expand=True)
-        tk.Button(log_frame, text="Clear log", command=lambda: self.log.delete("1.0", tk.END)).pack(pady=3)
+        lf = tk.LabelFrame(self, text=" Live Output ", font=("Segoe UI", 10, "bold"), bg="#f0f0f0", padx=8, pady=6)
+        lf.pack(fill=tk.BOTH, expand=True, padx=12, pady=6)
+        self.log = scrolledtext.ScrolledText(lf, height=10, font=("Consolas", 9), bg="#1e1e1e", fg="#d4d4d4", insertbackground="white")
+        self.log.pack(fill=tk.BOTH, expand=True, pady=4)
+        tk.Button(lf, text="Clear Log", font=("Segoe UI", 9), command=lambda: self.log.delete("1.0", tk.END), relief=tk.FLAT).pack(pady=2)
 
     def _log(self, text):
         self.log.insert(tk.END, text)
         self.log.see(tk.END)
 
-    def _set_status(self, text):
-        self.status_var.set(text)
+    def _show_setup_wizard(self):
+        messagebox.showwarning("Setup Required",
+            "HandBrakeCLI was not found on your system.\n\n"
+            "Please:\n"
+            "1. Download HandBrake from https://handbrake.fr/downloads.php\n"
+            "2. Install it (default location is fine)\n"
+            "3. Restart RipDvD\n\n"
+            "RipDvD needs HandBrake to convert your DVDs.")
 
     def start_scan(self):
         if self.scanning or self.encoding:
             return
         if self.hb is None:
-            messagebox.showerror("Error", "HandBrakeCLI not found.\nInstall HandBrake for Windows.")
+            self._show_setup_wizard()
             return
         drive = self.drive_var.get().strip()
         if not drive:
-            messagebox.showerror("Error", "No DVD drive selected.")
+            messagebox.showerror("Error", "Please select a DVD drive.")
             return
         if not drive.endswith("\\"):
             drive += "\\"
@@ -237,9 +236,9 @@ class RipdvdWin(tk.Tk):
         self.scanning = True
         self.btn_rip.config(state=tk.DISABLED)
         self.btn_rescan.config(state=tk.DISABLED)
-        self.status_var.set("Scanning DVD…")
+        self.status_var.set("Scanning DVD...")
         self.progress["value"] = 0
-        self.pct_var.set("…")
+        self.pct_var.set("...")
         self.log.delete("1.0", tk.END)
         self._log("=== DVD SCAN ===\n")
         threading.Thread(target=self._scan_worker, daemon=True).start()
@@ -262,7 +261,7 @@ class RipdvdWin(tk.Tk):
             if best_ms == 0:
                 with open(DEBUG_LOG, "w") as f:
                     f.write(scan0)
-                self.after(0, lambda: self._scan_failed("Cannot analyse DVD.\nCheck libdvdcss / drive."))
+                self.after(0, lambda: self._scan_failed("Cannot analyse DVD.\nCheck drive / libdvdcss."))
                 return
 
             self.best_title = best_title
@@ -275,8 +274,8 @@ class RipdvdWin(tk.Tk):
                 f.write(f"=== TITLE {best_title} ({best_ms} ms) ===\n")
                 f.write(scan0)
 
-            self._log(f"\n→ Main title: {best_title} ({best_ms // 60000} min)\n")
-            self._log(f"→ {len(audio)} audio track(s), {len(subs)} subtitle track(s).\n")
+            self._log(f"\n-> Main title: {best_title} ({best_ms // 60000} min)\n")
+            self._log(f"-> {len(audio)} audio track(s), {len(subs)} subtitle track(s).\n")
             self.after(0, self._scan_done)
         except Exception as e:
             self.after(0, lambda: self._scan_failed(f"Scan error:\n{e}"))
@@ -291,7 +290,6 @@ class RipdvdWin(tk.Tk):
         self.audio_combo["values"] = labels if labels else ["(none)"]
         if labels:
             self.audio_var.set(labels[0])
-            # prefer French then English
             for lbl in labels:
                 low = lbl.lower()
                 if "fran" in low or "fra" in low:
@@ -316,14 +314,14 @@ class RipdvdWin(tk.Tk):
         self.btn_rip.config(state=tk.NORMAL)
         self.btn_rescan.config(state=tk.NORMAL)
         self.status_var.set("Scan failed.")
-        self._log(f"\n❌ {msg}\n")
+        self._log(f"\n[ERROR] {msg}\n")
         messagebox.showerror("Error", msg)
 
     def on_rip(self):
         if self.encoding or self.scanning:
             return
         if self.hb is None:
-            messagebox.showerror("Error", "HandBrakeCLI not found.")
+            self._show_setup_wizard()
             return
         if not self.audio_tracks:
             messagebox.showerror("Error", "No audio tracks detected. Rescan the DVD.")
@@ -334,7 +332,7 @@ class RipdvdWin(tk.Tk):
         self.btn_stop.config(state=tk.NORMAL)
         self.btn_rescan.config(state=tk.DISABLED)
         self.btn_resume.config(state=tk.DISABLED)
-        self.status_var.set("Encoding…")
+        self.status_var.set("Encoding...")
         self.progress["value"] = 0
         self.pct_var.set("0 %")
         self.out_var.set("")
@@ -424,16 +422,16 @@ class RipdvdWin(tk.Tk):
         if self.process is not None:
             try:
                 self.process.terminate()
-                self._log("\n⚠ Stop requested by user.\n")
+                self._log("\n[!] Stop requested by user.\n")
             except Exception:
                 pass
-        self.status_var.set("Stop requested…")
+        self.status_var.set("Stop requested...")
 
     def on_resume(self):
         if self.encoding or self.scanning:
             return
         if self.hb is None:
-            messagebox.showerror("Error", "HandBrakeCLI not found.")
+            self._show_setup_wizard()
             return
         if self.last_encode_params is None:
             self.start_scan()
@@ -443,7 +441,7 @@ class RipdvdWin(tk.Tk):
         self.btn_stop.config(state=tk.NORMAL)
         self.btn_rescan.config(state=tk.DISABLED)
         self.btn_resume.config(state=tk.DISABLED)
-        self.status_var.set("Resuming encode…")
+        self.status_var.set("Resuming encode...")
         self.progress["value"] = 0
         self.pct_var.set("0 %")
         self.out_var.set("")
@@ -528,12 +526,12 @@ class RipdvdWin(tk.Tk):
         self.btn_stop.config(state=tk.DISABLED)
         self.btn_rescan.config(state=tk.NORMAL)
         self.btn_resume.config(state=tk.NORMAL)
-        self.status_var.set("Done ✅")
+        self.status_var.set("Done!")
         self.progress["value"] = 100
         self.pct_var.set("100 %")
         self.out_var.set(f"{outfile}\n({size})")
-        self._log(f"\n✅ Done: {outfile} ({size})\n")
-        messagebox.showinfo("RipDvD", f"Encoding complete:\n{outfile}\n({size})")
+        self._log(f"\n[OK] Done: {outfile} ({size})\n")
+        messagebox.showinfo("RipDvD", f"Encoding complete!\n\n{outfile}\n({size})")
 
     def _encode_failed(self, msg):
         self.encoding = False
@@ -544,7 +542,7 @@ class RipdvdWin(tk.Tk):
         self.status_var.set("Error")
         self.progress["value"] = 0
         self.pct_var.set("0 %")
-        self._log(f"\n❌ {msg}\n")
+        self._log(f"\n[ERROR] {msg}\n")
         messagebox.showerror("Error", msg)
 
     @staticmethod
@@ -557,7 +555,7 @@ class RipdvdWin(tk.Tk):
 
 
 def main():
-    app = RipdvdWin()
+    app = RipDvDWin()
     app.mainloop()
 
 

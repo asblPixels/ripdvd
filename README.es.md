@@ -151,6 +151,10 @@ python3 ~/.local/bin/ripdvd-gui.py
 
 O busca **RipDvD** en el menú de aplicaciones de GNOME.
 
+### Windows
+
+Para Windows 10/11, descarga el ZIP desde https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip, extráelo y haz doble clic en `install-windows.bat`. No se requieren conocimientos técnicos.
+
 ### Verificar que todo funciona
 
 ```bash

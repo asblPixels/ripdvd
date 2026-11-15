@@ -212,6 +212,11 @@ ripdvd/
 └── .gitignore
 ```
 
+
+### Windows
+
+对于 Windows 10/11，从 https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip 下载 ZIP，解压后双击 `install-windows.bat`。无需技术知识。
+
 ## 🐛 故障排除
 
 ### 应用程序无法启动 — `ModuleNotFoundError: No module named 'gi'`

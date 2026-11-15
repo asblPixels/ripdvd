@@ -154,59 +154,27 @@ Or search for **RipDvD** in the GNOME application menu.
 
 ### Windows
 
-For Windows 10/11, use the `windows` branch:
+**No technical knowledge required!** Just 3 steps:
 
-```powershell
-git clone -b windows https://github.com/asblPixels/ripdvd.git
-cd ripdvd
-.\scripts\install-windows.ps1
-```
+1. **Download** the ZIP: https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip
+2. **Extract** it to a folder (e.g., your Desktop).
+3. **Double-click** `install-windows.bat` and follow the on-screen instructions.
 
-Or download the ZIP from https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip
+That's it! A **RipDvD** shortcut will appear on your Desktop. Double-click it to start ripping DVDs.
 
-#### Step 1 — Install Python
+> The installer automatically checks for Python and HandBrake, and guides you if anything is missing.
 
-1. Download Python 3.10+ from https://www.python.org/downloads/
-2. Run the installer.
-3. **Important**: Check **"Add Python to PATH"** during installation.
-4. Verify: open PowerShell and run `python --version`
+#### Manual steps (if the installer doesn't work)
 
-#### Step 2 — Install HandBrake
-
-1. Download HandBrake for Windows from https://handbrake.fr/downloads.php
-2. Run the installer (default location: `C:\Program Files\HandBrake\`).
-3. Verify: `Get-Command HandBrakeCLI` in PowerShell.
-
-#### Step 3 — Run the installer
-
-Open PowerShell (as current user, no admin needed) and run:
-
-```powershell
-cd ripdvd
-.\scripts\install-windows.ps1
-```
-
-The installer will:
-1. Verify Python is installed and in PATH.
-2. Verify HandBrakeCLI is available.
-3. Create the output directory (`%USERPROFILE%\Videos\Rips`).
-4. Copy the app to `%LOCALAPPDATA%\ripdvd\ripdvd.py`.
-5. Create a Desktop shortcut and Start Menu entry.
-
-#### Step 4 — Launch
-
-Double-click the **RipDvD** shortcut on your Desktop, or search for **RipDvD** in the Start Menu.
-
-Or from PowerShell:
-```powershell
-python "$env:LOCALAPPDATA\ripdvd\ripdvd.py"
-```
+1. **Install Python**: Download from https://www.python.org/downloads/ — check "Add Python to PATH".
+2. **Install HandBrake**: Download from https://handbrake.fr/downloads.php
+3. **Run the app**: `python ripdvd-win.py`
 
 #### Windows notes
 
-- The Windows version uses **tkinter** (built into Python) instead of GTK4, so the UI looks different from the Linux version but has the same features.
-- DVD drive detection is automatic (scans for CD-ROM drives). If not detected, enter the drive letter manually (e.g., `D:\`).
-- libdvdcss is included with HandBrake for Windows — no separate installation needed.
+- The Windows version uses **tkinter** (built into Python) instead of GTK4.
+- DVD drive detection is automatic. If not detected, enter the drive letter manually (e.g., `D:\`).
+- libdvdcss is included with HandBrake for Windows.
 - Output files are saved to `%USERPROFILE%\Videos\Rips\`.
 
 ### Verify everything works (all platforms)
