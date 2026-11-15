@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-15
+
+### Added
+- **Reprendre** (Resume) button: retry the last encode with the same parameters (title, audio, subtitles).
+- **Quitter** (Quit) button: close the application cleanly, stopping any running encode first.
+- Clearer README: supported systems table, step-by-step download/install instructions, verification commands.
+
 ## [1.0.0] - 2026-11-15
 
 ### Added

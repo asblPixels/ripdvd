@@ -120,6 +120,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.sub_tracks = []
         self.best_title = 1
         self.best_dur_min = 0
+        self.last_encode_params = None  # (title, audio_idx, sub_idx, outfile) for resume
 
         # ---------- Layout ----------
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -203,6 +204,20 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.btn_clear.connect("clicked", lambda _b: self._clear_log())
         btn_box.append(self.btn_clear)
 
+        self.btn_resume = Gtk.Button(label="Reprendre")
+        self.btn_resume.add_css_class("pill")
+        self.btn_resume.set_size_request(110, 40)
+        self.btn_resume.set_sensitive(False)
+        self.btn_resume.connect("clicked", self.on_resume_clicked)
+        btn_box.append(self.btn_resume)
+
+        self.btn_quit = Gtk.Button(label="Quitter")
+        self.btn_quit.add_css_class("destructive-action")
+        self.btn_quit.add_css_class("pill")
+        self.btn_quit.set_size_request(90, 40)
+        self.btn_quit.connect("clicked", self.on_quit_clicked)
+        btn_box.append(self.btn_quit)
+
         box.append(btn_box)
 
         self.out_label = Gtk.Label(label="")
@@ -284,6 +299,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.scanning = True
         self.btn_rip.set_sensitive(False)
         self.btn_refresh.set_sensitive(False)
+        self.btn_resume.set_sensitive(False)
         self.status.set_label("Analyse du DVD…")
         self.progress.set_fraction(0.0)
         self.progress.set_text("…")
@@ -341,6 +357,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.scanning = False
         self.btn_rip.set_sensitive(True)
         self.btn_refresh.set_sensitive(True)
+        self.btn_resume.set_sensitive(True)
 
         labels = [a[1] for a in self.audio_tracks]
         self._set_combo_items(self.audio_combo, labels if labels else ["(aucune)"])
@@ -371,6 +388,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.scanning = False
         self.btn_rip.set_sensitive(True)
         self.btn_refresh.set_sensitive(True)
+        self.btn_resume.set_sensitive(True)
         self.status.set_label("Échec du scan.")
         self._append_log(f"\n❌ {msg}\n")
         self.show_error(msg)
@@ -393,6 +411,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.btn_rip.set_sensitive(False)
         self.btn_stop.set_sensitive(True)
         self.btn_refresh.set_sensitive(False)
+        self.btn_resume.set_sensitive(False)
         self.status.set_label("Encodage en cours…")
         self.progress.set_fraction(0.0)
         self.progress.set_text("0 %")
@@ -408,6 +427,9 @@ class RipdvdWindow(Adw.ApplicationWindow):
         sub_idx = None
         if sub_sel > 0 and self.sub_tracks:
             sub_idx = self.sub_tracks[sub_sel - 1][0]
+
+        # Save params for resume
+        self.last_encode_params = (self.best_title, audio_idx, sub_idx)
 
         name = f"DVD_{datetime.now():%Y%m%d_%H%M%S}"
         os.makedirs(OUT_DIR, exist_ok=True)
@@ -484,6 +506,111 @@ class RipdvdWindow(Adw.ApplicationWindow):
                 pass
         self.status.set_label("Arrêt demandé…")
 
+    def on_resume_clicked(self, _btn):
+        """Resume/retry the last encode with the same parameters."""
+        if self.encoding or self.scanning:
+            return
+        if self.hb is None:
+            self.show_error("HandBrakeCLI introuvable.")
+            return
+        if not os.path.exists("/dev/sr0"):
+            self.show_error("Aucun lecteur DVD détecté.\nInsérez un DVD puis rescanner.")
+            return
+        if self.last_encode_params is None:
+            # No previous params: rescan first
+            self.start_scan()
+            return
+        # Re-encode with same params
+        self.encoding = True
+        self.btn_rip.set_sensitive(False)
+        self.btn_resume.set_sensitive(False)
+        self.btn_stop.set_sensitive(True)
+        self.btn_refresh.set_sensitive(False)
+        self.status.set_label("Reprise de l'encodage…")
+        self.progress.set_fraction(0.0)
+        self.progress.set_text("0 %")
+        self.out_label.set_label("")
+        self._clear_log()
+        self._append_log("=== REPRISE DE L'ENCODAGE ===\n")
+        threading.Thread(target=self._resume_worker, daemon=True).start()
+
+    def _resume_worker(self):
+        title, audio_idx, sub_idx = self.last_encode_params
+        name = f"DVD_{datetime.now():%Y%m%d_%H%M%S}_resume"
+        os.makedirs(OUT_DIR, exist_ok=True)
+        outfile = os.path.join(OUT_DIR, f"{name}.mkv")
+
+        cmd = self.hb + [
+            "-i", "/dev/sr0",
+            "-t", str(title),
+            "-o", outfile,
+            "--preset", "Fast 480p30",
+            "--encoder", "x264",
+            "--quality", "20",
+            "--encoder-preset", "medium",
+            "--aencoder", "copy",
+            "--audio", str(audio_idx),
+        ]
+        if sub_idx is not None:
+            cmd += ["--subtitle", str(sub_idx)]
+
+        self._append_log("Commande : " + " ".join(cmd) + "\n\n")
+
+        try:
+            self.process = subprocess.Popen(
+                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+            )
+        except Exception as e:
+            GLib.idle_add(self._encode_failed, f"Échec du lancement :\n{e}")
+            return
+
+        tail = []
+        for line in self.process.stdout:
+            tail.append(line)
+            if len(tail) > 50:
+                tail.pop(0)
+            self._append_log(line)
+            m = re.search(r",\s*([\d.]+)\s*%", line)
+            if m:
+                pct = float(m.group(1))
+                GLib.idle_add(self._update_progress, pct)
+
+        self.process.wait()
+        rc = self.process.returncode
+        self.process = None
+
+        with open(DEBUG_LOG, "a") as f:
+            f.write(f"\n\n=== RESUME (rc={rc}) ===\n")
+            f.write("CMD: " + " ".join(cmd) + "\n")
+            f.write("".join(tail))
+
+        if rc != 0:
+            tail_text = "".join(tail[-20:]).strip()
+            GLib.idle_add(self._encode_failed,
+                          f"Échec de la reprise (code {rc}).\n\n"
+                          f"Dernières lignes :\n{tail_text}\n\n"
+                          f"Log complet : {DEBUG_LOG}")
+            return
+        if not os.path.isfile(outfile) or os.path.getsize(outfile) == 0:
+            tail_text = "".join(tail[-20:]).strip()
+            GLib.idle_add(self._encode_failed,
+                          f"Fichier de sortie vide ou absent.\n\n"
+                          f"Dernières lignes :\n{tail_text}\n\n"
+                          f"Log complet : {DEBUG_LOG}")
+            return
+
+        size = self._human_size(os.path.getsize(outfile))
+        GLib.idle_add(self._encode_ok, outfile, size)
+
+    def on_quit_clicked(self, _btn):
+        if self.process is not None:
+            try:
+                self.process.terminate()
+                self._append_log("\n⚠ Arrêt du processus en cours avant de quitter.\n")
+            except Exception:
+                pass
+        self.get_application().quit()
+
     def _update_progress(self, pct):
         self.progress.set_fraction(pct / 100.0)
         self.progress.set_text(f"{pct:.1f} %")
@@ -493,6 +620,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.btn_rip.set_sensitive(True)
         self.btn_stop.set_sensitive(False)
         self.btn_refresh.set_sensitive(True)
+        self.btn_resume.set_sensitive(True)
         self.status.set_label("Terminé ✅")
         self.progress.set_fraction(1.0)
         self.progress.set_text("100 %")
@@ -507,6 +635,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.btn_rip.set_sensitive(True)
         self.btn_stop.set_sensitive(False)
         self.btn_refresh.set_sensitive(True)
+        self.btn_resume.set_sensitive(True)
         self.status.set_label("Erreur")
         self.progress.set_fraction(0.0)
         self.progress.set_text("0 %")

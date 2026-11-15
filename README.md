@@ -52,55 +52,79 @@
 
 ## 🖥️ Requirements
 
-- **OS**: Fedora 43+ (tested on Fedora 45, GNOME 49). Should work on any recent Fedora/RHEL.
-- **CPU**: Any x86_64 (software encoding via x264). No GPU required.
-- **Optical drive**: internal or USB DVD reader (`/dev/sr0`).
-- **Dependencies**:
-  - Python 3.10+
-  - `python3-gobject`, `gtk4`, `libadwaita`
-  - `HandBrakeCLI` (native preferred, Flatpak `fr.handbrake.ghb` as fallback)
-  - `zenity` (for error dialogs)
-  - `libdvdcss` (for encrypted commercial DVDs)
+### Supported systems
+
+| Component | Required |
+|---|---|
+| **Operating system** | Fedora 43+ (tested on Fedora 45). Any recent Fedora/RHEL-based distro should work. |
+| **Desktop** | GNOME (GTK4/libadwaita). Works on X11 and Wayland. |
+| **Architecture** | x86_64 |
+| **CPU** | Any x86_64 (software encoding via x264). No GPU required. |
+| **RAM** | 2 GB minimum, 4 GB recommended |
+| **Disk** | ~1.5 GB free per movie (output) + ~8 GB temp during encoding |
+| **Optical drive** | Internal or USB DVD reader (appears as `/dev/sr0`) |
+
+### Software dependencies
+
+- Python 3.10+
+- `python3-gobject`, `gtk4`, `libadwaita`
+- `HandBrakeCLI` (native preferred; Flatpak `fr.handbrake.ghb` as fallback)
+- `zenity` (error dialogs)
+- `libdvdcss` (encrypted commercial DVDs only)
 
 ## 🚀 Installation
 
-### Quick install (recommended)
+### Step 1 — Download
 
 ```bash
 git clone https://github.com/asblPixels/ripdvd.git
 cd ripdvd
+```
+
+> Don't have `git`? Download the ZIP from
+> https://github.com/asblPixels/ripdvd/archive/refs/heads/main.zip and extract it.
+
+### Step 2 — Install dependencies
+
+```bash
+sudo dnf install -y python3 python3-gobject gtk4 libadwaita zenity HandBrake HandBrake-cli
+```
+
+For encrypted commercial DVDs, also install `libdvdcss`:
+
+```bash
+sudo dnf install -y rpmfusion-free-release-tainted
+sudo dnf install -y libdvdcss
+```
+
+### Step 3 — Run the installer
+
+```bash
 bash scripts/install.sh
 ```
 
-The install script will:
-1. Install system dependencies via `dnf`.
-2. Install HandBrake (native, with Flatpak fallback).
-3. Copy the application to `~/.local/bin/` and register a GNOME menu entry.
+The installer will:
+1. Verify Python/GTK dependencies.
+2. Install HandBrake (native, with Flatpak fallback if native is unavailable).
+3. Copy the app to `~/.local/bin/ripdvd-gui.py`.
+4. Register a GNOME menu entry (`ripdvd`).
 
-### Manual install
+### Step 4 — Launch
 
 ```bash
-# 1. Dependencies
-sudo dnf install -y python3 python3-gobject gtk4 libadwaita zenity HandBrake HandBrake-cli
-
-# 2. For encrypted DVDs
-sudo dnf install -y rpmfusion-free-release-tainted
-sudo dnf install -y libdvdcss
-
-# 3. Copy the app
-mkdir -p ~/.local/bin ~/.local/share/applications
-cp src/ripdvd.py ~/.local/bin/ripdvd-gui.py
-chmod +x ~/.local/bin/ripdvd-gui.py
-cp data/ripdvd.desktop ~/.local/share/applications/
-update-desktop-database ~/.local/share/applications
+python3 ~/.local/bin/ripdvd-gui.py
 ```
 
-### Verify
+Or search for **ripdvd** in the GNOME application menu.
+
+### Verify everything works
 
 ```bash
-python3 -c "import gi; gi.require_version('Gtk','4.0'); gi.require_version('Adw','1'); print('OK')"
+python3 -c "import gi; gi.require_version('Gtk','4.0'); gi.require_version('Adw','1'); print('GTK4/Adw OK')"
 command -v HandBrakeCLI && echo "HandBrakeCLI OK"
 ```
+
+Both should print `OK`.
 
 ## 🎬 Usage
 
@@ -119,7 +143,8 @@ command -v HandBrakeCLI && echo "HandBrakeCLI OK"
 | **Rip DVD** | Start encoding the selected title. |
 | **Arrêter** | Cancel the current encode. |
 | **Rescanner** | Re-analyse the disc (useful after swapping DVDs). |
-| **Effacer log** | Clear the live output window. |
+| **Reprendre** | Resume/retry the last encode with the same parameters. |
+| **Quitter** | Close the application (stops any running encode first). |
 
 ### CLI version
 
