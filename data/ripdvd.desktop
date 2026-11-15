@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ripdvd
+Comment=One-click DVD ripper (MKV H.264)
+Exec=python3 /home/pixels/.local/bin/ripdvd-gui.py
+Icon=media-optical
+Type=Application
+Categories=AudioVideo;Video;
+Terminal=false
+StartupNotify=true
