@@ -204,6 +204,12 @@ class RipdvdWindow(Adw.ApplicationWindow):
         self.btn_clear.connect("clicked", lambda _b: self._clear_log())
         btn_box.append(self.btn_clear)
 
+        self.btn_about = Gtk.Button(label="À propos")
+        self.btn_about.add_css_class("flat")
+        self.btn_about.set_size_request(90, 40)
+        self.btn_about.connect("clicked", self.on_about_clicked)
+        btn_box.append(self.btn_about)
+
         self.btn_resume = Gtk.Button(label="Reprendre")
         self.btn_resume.add_css_class("pill")
         self.btn_resume.set_size_request(110, 40)
@@ -610,6 +616,34 @@ class RipdvdWindow(Adw.ApplicationWindow):
             except Exception:
                 pass
         self.get_application().quit()
+
+    def on_about_clicked(self, _btn):
+        dialog = Adw.AboutDialog.new()
+        dialog.set_application_name("RipDvD")
+        dialog.set_application_icon("media-optical")
+        dialog.set_version("1.1.0")
+        dialog.set_comments("From disc to digital — effortlessly.\n\nOne-click DVD ripper for Linux & Windows.")
+        dialog.set_copyright("© 2026 asblPixels — All rights reserved.")
+        dialog.set_license_type(Gtk.License.MIT_X11)
+        dialog.set_developers(["asblPixels (https://github.com/asblPixels)"])
+        dialog.set_website("https://github.com/asblPixels/ripdvd")
+        dialog.set_website_label("github.com/asblPixels/ripdvd")
+        dialog.set_issue_url("https://github.com/asblPixels/ripdvd/issues")
+        # Credits
+        dialog.add_credit_section("Acknowledgements", [
+            "HandBrake (https://handbrake.fr/) — encoding engine",
+            "libdvdcss (VideoLAN) — DVD decryption",
+            "GNOME / GTK4 / libadwaita — UI toolkit",
+            "RPM Fusion — Fedora packaging",
+            "Fedora Project — operating system",
+        ])
+        dialog.add_credit_section("Legal", [
+            "This software is provided under the MIT License.",
+            "For personal use — backing up DVDs you own.",
+            "Decrypting copy-protected discs may be restricted in your country.",
+            "Check your local laws before use.",
+        ])
+        dialog.present(self)
 
     def _update_progress(self, pct):
         self.progress.set_fraction(pct / 100.0)

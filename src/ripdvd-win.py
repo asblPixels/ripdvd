@@ -199,6 +199,8 @@ class RipDvDWin(tk.Tk):
         self.btn_rescan.pack(side=tk.LEFT, padx=3)
         self.btn_quit = tk.Button(bf, text="Quit", command=self.on_quit, **btn_style)
         self.btn_quit.pack(side=tk.RIGHT, padx=3)
+        self.btn_about = tk.Button(bf, text="About", command=self.on_about, **btn_style)
+        self.btn_about.pack(side=tk.RIGHT, padx=3)
 
         # Live log
         lf = tk.LabelFrame(self, text=" Live Output ", font=("Segoe UI", 10, "bold"), bg="#f0f0f0", padx=8, pady=6)
@@ -515,6 +517,27 @@ class RipDvDWin(tk.Tk):
             except Exception:
                 pass
         self.destroy()
+
+    def on_about(self):
+        msg = (
+            "RipDvD — Windows Edition\n"
+            "Version 1.1.0\n\n"
+            "From disc to digital — effortlessly.\n\n"
+            "One-click DVD ripper for Windows.\n"
+            "Wraps HandBrakeCLI to convert DVDs to MKV.\n\n"
+            "Created by asblPixels\n"
+            "https://github.com/asblPixels/ripdvd\n\n"
+            "License: MIT\n\n"
+            "Acknowledgements:\n"
+            "- HandBrake (handbrake.fr) — encoding engine\n"
+            "- libdvdcss (VideoLAN) — DVD decryption\n"
+            "- Python / tkinter — UI toolkit\n\n"
+            "Legal note:\n"
+            "This tool is for backing up DVDs you own.\n"
+            "Decrypting copy-protected discs may be restricted\n"
+            "in your country. Check your local laws."
+        )
+        messagebox.showinfo("About RipDvD", msg)
 
     def _update_progress(self, pct):
         self.progress["value"] = pct
