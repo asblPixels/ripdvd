@@ -31,66 +31,6 @@ APP_ID = "io.github.ripdvd"
 OUT_DIR = os.path.join(os.path.expanduser("~"), "Vidéos", "Rips")
 DEBUG_LOG = os.path.join(os.path.expanduser("~"), ".ripdvd-debug.log")
 
-# ---- Couleurs asblPixels : turquoise (#00C9A0) + encre (#04302A) ----
-THEME_CSS = b"""
-@define-color accent_color #00b894;
-@define-color accent_bg_color #00c9a0;
-@define-color accent_fg_color #04302a;
-
-.hero {
-    background-image: linear-gradient(135deg, #012e28 0%, #00a884 55%, #00e0b0 100%);
-    border-radius: 16px;
-    padding: 18px 16px 16px 16px;
-}
-.hero-title {
-    color: #ffffff;
-    font-weight: 800;
-}
-.hero-sub {
-    color: rgba(255, 255, 255, 0.85);
-}
-.hero-logo {
-    border-radius: 14px;
-}
-.brand-caption {
-    color: #00876c;
-}
-.card {
-    border-color: alpha(@accent_bg_color, 0.35);
-}
-progressbar > trough > progress {
-    background-image: linear-gradient(90deg, #00b894, #00e0b0);
-}
-"""
-
-
-def find_logo():
-    """Cherche le logo de l'application (identité asblPixels)."""
-    here = os.path.dirname(os.path.abspath(__file__))
-    candidates = [
-        os.path.join(os.path.expanduser("~"), ".local", "share", "ripdvd", "logo.png"),
-        os.path.join(os.path.expanduser("~"), ".local", "share", "icons",
-                     "hicolor", "256x256", "apps", "ripdvd.png"),
-        os.path.join(here, "logo.png"),
-        os.path.join(here, "..", "data", "logo.png"),
-    ]
-    for path in candidates:
-        if os.path.isfile(path):
-            return os.path.abspath(path)
-    return None
-
-
-def install_theme():
-    """Applique la palette asblPixels (turquoise) à l'application."""
-    css = Gtk.CssProvider()
-    css.load_from_data(THEME_CSS)
-    display = Gdk.Display.get_default()
-    if display is not None:
-        Gtk.StyleContext.add_provider_for_display(
-            display, css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
-
-
 def find_handbrake():
     if shutil.which("HandBrakeCLI"):
         return ["HandBrakeCLI"], False, "natif"
@@ -166,258 +106,488 @@ def parse_tracks_for_title(text, target_title):
     return audio, subs
 
 
+VERSION = "1.3.0"
+
+# ---- Thème : sobre, aéré, accent turquoise asblPixels ----
+THEME_CSS = """
+@define-color accent_color #00896e;
+@define-color accent_bg_color #00a884;
+@define-color accent_fg_color #ffffff;
+
+/* Titres et chiffres */
+.page-title   { font-size: 22pt; font-weight: 800; letter-spacing: -0.5px; }
+.page-sub     { font-size: 11pt; opacity: 0.62; }
+.big-percent  { font-size: 60pt; font-weight: 300; letter-spacing: -2px;
+                font-feature-settings: "tnum"; }
+.eyebrow      { font-size: 9pt; font-weight: 700; letter-spacing: 1.2px;
+                opacity: 0.55; }
+
+/* Pastille d'icône douce */
+.icon-bubble  { background-color: alpha(@accent_bg_color, 0.12);
+                color: @accent_color; border-radius: 999px; padding: 26px; }
+.icon-bubble.warning { background-color: alpha(@warning_bg_color, 0.14);
+                       color: @warning_color; }
+
+/* Liste "verre" : pas de bordure, pas d'ombre */
+.soft-list    { background-color: alpha(@window_fg_color, 0.045);
+                border-radius: 18px; box-shadow: none; border: none; }
+.soft-list > row { background-color: transparent; border-radius: 18px; }
+.soft-list > row:not(:last-child) { border-bottom: 1px solid alpha(@window_fg_color, 0.06); }
+
+/* Bouton d'action principal */
+.cta          { min-height: 52px; border-radius: 26px; font-size: 12pt;
+                font-weight: 700; padding-left: 28px; padding-right: 28px; }
+.quiet        { opacity: 0.75; }
+
+/* Barre de progression fine */
+progressbar.slim > trough            { min-height: 6px; border-radius: 3px;
+                                       background-color: alpha(@window_fg_color, 0.08); }
+progressbar.slim > trough > progress { min-height: 6px; border-radius: 3px; }
+
+/* Panneau du journal */
+.log-panel    { background-color: alpha(@window_fg_color, 0.035); }
+.log-view, .log-view text { background-color: transparent; font-size: 9pt; }
+"""
+
+
+def install_theme():
+    """Applique le thème RipDvD à l'application."""
+    css = Gtk.CssProvider()
+    css.load_from_data(THEME_CSS.encode("utf-8"))
+    display = Gdk.Display.get_default()
+    if display is not None:
+        Gtk.StyleContext.add_provider_for_display(
+            display, css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
+
+def human_duration(minutes):
+    h, m = divmod(int(minutes), 60)
+    return f"{h} h {m:02d} min" if h else f"{m} min"
+
+
+def human_eta(h, m, s):
+    total = h * 60 + m + (1 if s >= 30 else 0)
+    if total < 1:
+        return "Moins d'une minute restante"
+    return f"Environ {human_duration(total)} restantes"
+
+
+def friendly_track(label):
+    """« Piste 2 — Français (AC3) (5.1 ch) » → « Français · 5.1 »."""
+    name = re.sub(r"^Piste \d+\s*—\s*", "", label)
+    lang = name.split(" (")[0].strip() or name
+    ch = re.search(r"\((\d\.\d) ch\)", name)
+    return f"{lang} · {ch.group(1)}" if ch else lang
+
+
+def friendly_list(labels):
+    """Noms lisibles ; ajoute le n° de piste seulement en cas de doublon."""
+    names = [friendly_track(l) for l in labels]
+    out = []
+    for i, (n, l) in enumerate(zip(names, labels)):
+        if names.count(n) > 1:
+            num = re.match(r"Piste (\d+)", l)
+            n = f"{n} · piste {num.group(1)}" if num else n
+        out.append(n)
+    return out
+
+
+def make_spinner(size=48):
+    if hasattr(Adw, "Spinner"):  # libadwaita ≥ 1.6
+        sp = Adw.Spinner()
+    else:
+        sp = Gtk.Spinner()
+        sp.start()
+    sp.set_size_request(size, size)
+    sp.set_halign(Gtk.Align.CENTER)
+    return sp
+
+
 class RipdvdWindow(Adw.ApplicationWindow):
+    DRIVE = "/dev/sr0"
+
     def __init__(self, app):
-        super().__init__(application=app, title="RipDvD — par asblPixels")
-        self.set_default_size(500, 720)
-        self.set_resizable(True)
+        super().__init__(application=app, title="RipDvD")
+        self.set_default_size(460, 640)
+        self.set_size_request(360, 520)
 
         self.hb, self.is_flatpak, self.hb_source = find_handbrake()
         self.process = None
         self.encoding = False
         self.scanning = False
+        self.stop_requested = False
         self.audio_tracks = []
         self.sub_tracks = []
         self.best_title = 1
         self.best_dur_min = 0
-        self.last_encode_params = None  # (title, audio_idx, sub_idx, outfile) for resume
+        self.last_encode_params = None   # (titre, piste audio, piste sous-titres)
+        self.last_outfile = None
 
-        # ---------- Layout ----------
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
-        box.set_margin_top(16)
-        box.set_margin_bottom(12)
-        box.set_margin_start(20)
-        box.set_margin_end(20)
+        self._build_actions()
+        self.set_content(self._build_ui())
+        self.connect("close-request", self._on_close_request)
 
-        # ---- Hero banner aux couleurs asblPixels ----
-        hero = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
-        hero.add_css_class("hero")
-
-        logo_path = find_logo()
-        if logo_path:
-            logo = Gtk.Picture.new_for_filename(logo_path)
-            logo.set_size_request(96, 64)
-            logo.set_content_fit(Gtk.ContentFit.CONTAIN)
-            logo.set_valign(Gtk.Align.CENTER)
-            logo.add_css_class("hero-logo")
-            hero.append(logo)
-
-        hero_text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        hero_text.set_valign(Gtk.Align.CENTER)
-
-        title = Gtk.Label(label="RipDvD")
-        title.add_css_class("title-1")
-        title.add_css_class("hero-title")
-        title.set_halign(Gtk.Align.START)
-        hero_text.append(title)
-
-        subtitle = Gtk.Label(label="Du disque au numérique — sans effort.")
-        subtitle.add_css_class("hero-sub")
-        subtitle.set_halign(Gtk.Align.START)
-        hero_text.append(subtitle)
-
-        hero.append(hero_text)
-        box.append(hero)
-
-        brand_caption = Gtk.Label(label="Un logiciel libre développé par asblPixels")
-        brand_caption.add_css_class("caption")
-        brand_caption.add_css_class("brand-caption")
-        brand_caption.set_halign(Gtk.Align.CENTER)
-        brand_caption.set_margin_top(6)
-        brand_caption.set_margin_bottom(10)
-        box.append(brand_caption)
-
-        self.status = Gtk.Label(label="Insertion d'un DVD puis scan automatique…")
-        self.status.add_css_class("dim-label")
-        self.status.set_wrap(True)
-        self.status.set_justify(Gtk.Justification.CENTER)
-        self.status.set_margin_bottom(8)
-        box.append(self.status)
-
-        audio_row = Adw.ActionRow(title="Langue audio")
-        self.audio_combo = Gtk.DropDown()
-        self.audio_combo.set_valign(Gtk.Align.CENTER)
-        audio_row.add_suffix(self.audio_combo)
-        audio_row.set_activatable_widget(self.audio_combo)
-        box.append(audio_row)
-
-        sub_row = Adw.ActionRow(title="Sous-titres")
-        self.sub_combo = Gtk.DropDown()
-        self.sub_combo.set_valign(Gtk.Align.CENTER)
-        sub_row.add_suffix(self.sub_combo)
-        sub_row.set_activatable_widget(self.sub_combo)
-        box.append(sub_row)
-
-        self.progress = Gtk.ProgressBar()
-        self.progress.set_show_text(True)
-        self.progress.set_text("0 %")
-        self.progress.set_margin_top(12)
-        self.progress.set_margin_bottom(10)
-        box.append(self.progress)
-
-        btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        btn_box.set_halign(Gtk.Align.CENTER)
-
-        self.btn_rip = Gtk.Button(label="Rip DVD")
-        self.btn_rip.add_css_class("suggested-action")
-        self.btn_rip.add_css_class("pill")
-        self.btn_rip.set_size_request(130, 40)
-        self.btn_rip.connect("clicked", self.on_rip_clicked)
-        btn_box.append(self.btn_rip)
-
-        self.btn_stop = Gtk.Button(label="Arrêter")
-        self.btn_stop.add_css_class("destructive-action")
-        self.btn_stop.add_css_class("pill")
-        self.btn_stop.set_size_request(100, 40)
-        self.btn_stop.set_sensitive(False)
-        self.btn_stop.connect("clicked", self.on_stop_clicked)
-        btn_box.append(self.btn_stop)
-
-        self.btn_refresh = Gtk.Button(label="Rescanner")
-        self.btn_refresh.add_css_class("flat")
-        self.btn_refresh.set_size_request(100, 40)
-        self.btn_refresh.connect("clicked", lambda _b: self.start_scan())
-        btn_box.append(self.btn_refresh)
-
-        self.btn_clear = Gtk.Button(label="Effacer log")
-        self.btn_clear.add_css_class("flat")
-        self.btn_clear.set_size_request(100, 40)
-        self.btn_clear.connect("clicked", lambda _b: self._clear_log())
-        btn_box.append(self.btn_clear)
-
-        self.btn_about = Gtk.Button(label="À propos")
-        self.btn_about.add_css_class("flat")
-        self.btn_about.set_size_request(90, 40)
-        self.btn_about.connect("clicked", self.on_about_clicked)
-        btn_box.append(self.btn_about)
-
-        self.btn_resume = Gtk.Button(label="Reprendre")
-        self.btn_resume.add_css_class("pill")
-        self.btn_resume.set_size_request(110, 40)
-        self.btn_resume.set_sensitive(False)
-        self.btn_resume.connect("clicked", self.on_resume_clicked)
-        btn_box.append(self.btn_resume)
-
-        self.btn_quit = Gtk.Button(label="Quitter")
-        self.btn_quit.add_css_class("destructive-action")
-        self.btn_quit.add_css_class("pill")
-        self.btn_quit.set_size_request(90, 40)
-        self.btn_quit.connect("clicked", self.on_quit_clicked)
-        btn_box.append(self.btn_quit)
-
-        box.append(btn_box)
-
-        self.out_label = Gtk.Label(label="")
-        self.out_label.add_css_class("caption")
-        self.out_label.add_css_class("dim-label")
-        self.out_label.set_wrap(True)
-        self.out_label.set_justify(Gtk.Justification.CENTER)
-        self.out_label.set_margin_top(8)
-        box.append(self.out_label)
-
-        log_label = Gtk.Label(label="Sortie en direct")
-        log_label.add_css_class("heading")
-        log_label.set_halign(Gtk.Align.START)
-        log_label.set_margin_top(10)
-        log_label.set_margin_bottom(4)
-        box.append(log_label)
-
-        self.log_view = Gtk.TextView()
-        self.log_view.set_editable(False)
-        self.log_view.set_cursor_visible(False)
-        self.log_view.set_monospace(True)
-        self.log_view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
-        self.log_buffer = self.log_view.get_buffer()
-
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_vexpand(True)
-        scrolled.set_min_content_height(180)
-        scrolled.set_child(self.log_view)
-        scrolled.add_css_class("card")
-        box.append(scrolled)
-
-        # Footer with credits
-        footer_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        footer_box.set_halign(Gtk.Align.CENTER)
-        footer_box.set_margin_top(8)
-        footer = Gtk.Label(label="© 2026 asblPixels — Licence MIT — Open Source")
-        footer.add_css_class("caption")
-        footer.add_css_class("accent")
-        footer.set_halign(Gtk.Align.CENTER)
-        footer_box.append(footer)
-        footer_link = Gtk.LinkButton(uri="https://github.com/asblPixels/ripdvd",
-                                     label="github.com/asblPixels/ripdvd")
-        footer_link.add_css_class("caption")
-        footer_link.set_halign(Gtk.Align.CENTER)
-        footer_box.append(footer_link)
-        box.append(footer_box)
-
-        self.set_content(box)
-
-        self._set_combo_items(self.audio_combo, ["(scan requis)"])
-        self._set_combo_items(self.sub_combo, ["Aucun"])
-
-        if os.path.exists("/dev/sr0"):
+        if self.hb is None:
+            self.stack.set_visible_child_name("missing")
+        elif os.path.exists(self.DRIVE):
             GLib.idle_add(self.start_scan)
         else:
-            self.status.set_label("Insérez un DVD puis cliquez sur Rescanner.")
+            self._show_empty(no_drive=True)
 
-    # ---------- Combo helpers ----------
-    def _set_combo_items(self, combo, labels):
-        model = Gtk.StringList.new(labels)
-        combo.set_model(model)
+    # ================================================================
+    #  Construction de l'interface
+    # ================================================================
+    def _build_actions(self):
+        def add(name, cb):
+            act = Gio.SimpleAction.new(name, None)
+            act.connect("activate", lambda *_: cb())
+            self.add_action(act)
+            return act
 
-    def _combo_index(self, combo):
-        sel = combo.get_selected()
+        self.act_rescan = add("rescan", self.start_scan)
+        add("open-folder", self.open_folder)
+        add("about", self.show_about)
+        add("quit", self.close)
+        self.act_log = Gio.SimpleAction.new_stateful(
+            "show-log", None, GLib.Variant.new_boolean(False))
+        self.act_log.connect("change-state", self._on_toggle_log)
+        self.add_action(self.act_log)
+
+    def _build_ui(self):
+        # ---- Barre de titre : titre seul + menu des options secondaires
+        header = Adw.HeaderBar()
+        header.set_title_widget(Adw.WindowTitle(title="RipDvD", subtitle=""))
+
+        menu = Gio.Menu()
+        main = Gio.Menu()
+        main.append("Analyser le disque", "win.rescan")
+        main.append("Ouvrir le dossier des films", "win.open-folder")
+        main.append("Afficher le journal", "win.show-log")
+        menu.append_section(None, main)
+        other = Gio.Menu()
+        other.append("À propos de RipDvD", "win.about")
+        other.append("Quitter", "win.quit")
+        menu.append_section(None, other)
+        menu_btn = Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu)
+        menu_btn.set_tooltip_text("Menu")
+        header.pack_end(menu_btn)
+
+        # ---- Pages (une seule visible à la fois)
+        self.stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.CROSSFADE,
+                               transition_duration=220, vexpand=True)
+        self.stack.add_named(self._page_empty(), "empty")
+        self.stack.add_named(self._page_scanning(), "scanning")
+        self.stack.add_named(self._page_ready(), "ready")
+        self.stack.add_named(self._page_encoding(), "encoding")
+        self.stack.add_named(self._page_done(), "done")
+        self.stack.add_named(self._page_error(), "error")
+        self.stack.add_named(self._page_missing(), "missing")
+
+        clamp = Adw.Clamp(maximum_size=420, tightening_threshold=360, child=self.stack)
+        clamp.set_margin_start(28)
+        clamp.set_margin_end(28)
+
+        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        body.append(clamp)
+        body.append(self._log_panel())
+
+        self.toasts = Adw.ToastOverlay(child=body)
+
+        view = Adw.ToolbarView()
+        view.add_top_bar(header)
+        view.set_content(self.toasts)
+
+        self._set_model(self.audio_row, ["—"])
+        self._set_model(self.sub_row, ["Aucun"])
+        return view
+
+    # ---- Briques réutilisables
+    @staticmethod
+    def _vbox(spacing=0, center=True):
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=spacing)
+        if center:
+            box.set_valign(Gtk.Align.CENTER)
+        box.set_vexpand(True)
+        box.set_margin_top(32)
+        box.set_margin_bottom(40)
+        return box
+
+    @staticmethod
+    def _bubble(icon, warning=False):
+        img = Gtk.Image.new_from_icon_name(icon)
+        img.set_pixel_size(44)
+        img.add_css_class("icon-bubble")
+        if warning:
+            img.add_css_class("warning")
+        img.set_halign(Gtk.Align.CENTER)
+        return img
+
+    @staticmethod
+    def _label(text, css, wrap=True):
+        lbl = Gtk.Label(label=text, wrap=wrap, justify=Gtk.Justification.CENTER)
+        lbl.set_halign(Gtk.Align.CENTER)
+        for c in css.split():
+            lbl.add_css_class(c)
+        return lbl
+
+    @staticmethod
+    def _cta(text, cb, full=True):
+        btn = Gtk.Button(label=text)
+        btn.add_css_class("suggested-action")
+        btn.add_css_class("cta")
+        if not full:
+            btn.set_halign(Gtk.Align.CENTER)
+        btn.connect("clicked", lambda _b: cb())
+        return btn
+
+    @staticmethod
+    def _link(text, cb):
+        btn = Gtk.Button(label=text, halign=Gtk.Align.CENTER)
+        btn.add_css_class("flat")
+        btn.add_css_class("quiet")
+        btn.connect("clicked", lambda _b: cb())
+        return btn
+
+    def _hero(self, box, icon, title, sub, warning=False):
+        box.append(self._bubble(icon, warning))
+        t = self._label(title, "page-title")
+        t.set_margin_top(28)
+        box.append(t)
+        s = self._label(sub, "page-sub")
+        s.set_margin_top(8)
+        box.append(s)
+        return t, s
+
+    # ---- 1. Aucun disque
+    def _page_empty(self):
+        box = self._vbox()
+        self.empty_title, self.empty_sub = self._hero(
+            box, "media-optical-symbolic", "Insérez un DVD",
+            "Le film est détecté automatiquement.")
+        btn = self._cta("Analyser le disque", self.start_scan, full=False)
+        btn.set_margin_top(40)
+        box.append(btn)
+        return box
+
+    # ---- 2. Analyse
+    def _page_scanning(self):
+        box = self._vbox()
+        box.append(make_spinner(48))
+        t = self._label("Analyse du disque", "page-title")
+        t.set_margin_top(32)
+        box.append(t)
+        s = self._label("Recherche du film principal…", "page-sub")
+        s.set_margin_top(8)
+        box.append(s)
+        return box
+
+    # ---- 3. Prêt
+    def _page_ready(self):
+        box = self._vbox(center=False)
+        box.set_valign(Gtk.Align.CENTER)
+
+        box.append(self._bubble("media-optical-symbolic"))
+        t = self._label("Film détecté", "page-title")
+        t.set_margin_top(24)
+        box.append(t)
+        self.ready_sub = self._label("", "page-sub")
+        self.ready_sub.set_margin_top(6)
+        box.append(self.ready_sub)
+
+        lst = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
+        lst.add_css_class("boxed-list")
+        lst.add_css_class("soft-list")
+        lst.set_margin_top(36)
+        self.audio_row = Adw.ComboRow(title="Langue audio")
+        self.sub_row = Adw.ComboRow(title="Sous-titres")
+        lst.append(self.audio_row)
+        lst.append(self.sub_row)
+        box.append(lst)
+
+        self.btn_rip = self._cta("Numériser le film", self.on_rip_clicked)
+        self.btn_rip.set_margin_top(32)
+        box.append(self.btn_rip)
+
+        hint = self._label("Enregistré dans Vidéos › Rips", "caption dim-label")
+        hint.set_margin_top(14)
+        box.append(hint)
+        return box
+
+    # ---- 4. Numérisation en cours
+    def _page_encoding(self):
+        box = self._vbox()
+        eyebrow = self._label("NUMÉRISATION EN COURS", "eyebrow", wrap=False)
+        box.append(eyebrow)
+        self.pct_label = self._label("0 %", "big-percent", wrap=False)
+        self.pct_label.set_margin_top(10)
+        box.append(self.pct_label)
+
+        self.progress = Gtk.ProgressBar()
+        self.progress.add_css_class("slim")
+        self.progress.set_margin_top(20)
+        box.append(self.progress)
+
+        self.eta_label = self._label("Calcul du temps restant…", "page-sub")
+        self.eta_label.set_margin_top(16)
+        box.append(self.eta_label)
+
+        self.btn_stop = Gtk.Button(label="Arrêter", halign=Gtk.Align.CENTER)
+        self.btn_stop.add_css_class("pill")
+        self.btn_stop.set_margin_top(48)
+        self.btn_stop.connect("clicked", self.on_stop_clicked)
+        box.append(self.btn_stop)
+        return box
+
+    # ---- 5. Terminé
+    def _page_done(self):
+        box = self._vbox()
+        _, self.done_sub = self._hero(box, "object-select-symbolic",
+                                      "Film enregistré", "")
+        btn = self._cta("Ouvrir le dossier", self.open_folder)
+        btn.set_margin_top(40)
+        box.append(btn)
+        again = self._link("Numériser un autre DVD", self.start_scan)
+        again.set_margin_top(8)
+        box.append(again)
+        return box
+
+    # ---- 6. Erreur / interruption
+    def _page_error(self):
+        box = self._vbox()
+        self.err_title, self.err_sub = self._hero(
+            box, "dialog-warning-symbolic", "", "", warning=True)
+        self.btn_retry = self._cta("Réessayer", self.on_retry_clicked)
+        self.btn_retry.set_margin_top(40)
+        box.append(self.btn_retry)
+        details = self._link("Voir les détails", lambda: self.act_log.change_state(
+            GLib.Variant.new_boolean(True)))
+        details.set_margin_top(8)
+        box.append(details)
+        return box
+
+    # ---- 7. HandBrake absent
+    def _page_missing(self):
+        box = self._vbox()
+        self._hero(box, "dialog-warning-symbolic", "HandBrake est introuvable",
+                   "RipDvD utilise HandBrakeCLI pour numériser les disques. "
+                   "Installez-le, puis relancez RipDvD.", warning=True)
+        cmd = Gtk.Label(label="sudo dnf install HandBrake-cli", selectable=True)
+        cmd.add_css_class("monospace")
+        cmd.add_css_class("dim-label")
+        cmd.set_margin_top(28)
+        box.append(cmd)
+        return box
+
+    # ---- Journal (replié par défaut)
+    def _log_panel(self):
+        self.log_view = Gtk.TextView(editable=False, cursor_visible=False,
+                                     monospace=True, wrap_mode=Gtk.WrapMode.WORD_CHAR)
+        self.log_view.add_css_class("log-view")
+        self.log_view.set_left_margin(16)
+        self.log_view.set_right_margin(16)
+        self.log_buffer = self.log_view.get_buffer()
+
+        scrolled = Gtk.ScrolledWindow(vexpand=False)
+        scrolled.set_min_content_height(170)
+        scrolled.set_child(self.log_view)
+
+        bar = Gtk.Box(spacing=6)
+        bar.set_margin_start(16)
+        bar.set_margin_end(8)
+        bar.set_margin_top(6)
+        bar.set_margin_bottom(2)
+        title = Gtk.Label(label="Journal", xalign=0, hexpand=True)
+        title.add_css_class("heading")
+        bar.append(title)
+        for icon, tip, cb in (("edit-clear-all-symbolic", "Effacer", self._clear_log),
+                              ("window-close-symbolic", "Masquer",
+                               lambda: self.act_log.change_state(GLib.Variant.new_boolean(False)))):
+            b = Gtk.Button(icon_name=icon, tooltip_text=tip)
+            b.add_css_class("flat")
+            b.add_css_class("circular")
+            b.connect("clicked", lambda _b, f=cb: f())
+            bar.append(b)
+
+        panel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        panel.add_css_class("log-panel")
+        panel.append(bar)
+        panel.append(scrolled)
+
+        self.log_revealer = Gtk.Revealer(
+            transition_type=Gtk.RevealerTransitionType.SLIDE_UP, child=panel)
+        return self.log_revealer
+
+    def _on_toggle_log(self, action, value):
+        action.set_state(value)
+        self.log_revealer.set_reveal_child(value.get_boolean())
+
+    # ================================================================
+    #  Petits utilitaires
+    # ================================================================
+    @staticmethod
+    def _set_model(row, labels):
+        row.set_model(Gtk.StringList.new(labels))
+
+    @staticmethod
+    def _row_index(row):
+        sel = row.get_selected()
         return sel if sel != Gtk.INVALID_LIST_POSITION else 0
 
-    # ---------- Log helpers ----------
     def _append_log(self, text):
         def _do():
-            end = self.log_buffer.get_end_iter()
-            self.log_buffer.insert(end, text)
-            mark = self.log_buffer.get_insert()
-            self.log_view.scroll_to_mark(mark, 0.0, True, 0.0, 1.0)
+            self.log_buffer.insert(self.log_buffer.get_end_iter(), text)
+            self.log_view.scroll_to_mark(self.log_buffer.get_insert(), 0.0, True, 0.0, 1.0)
             return False
         GLib.idle_add(_do)
 
     def _clear_log(self):
-        def _do():
-            self.log_buffer.set_text("")
-            return False
-        GLib.idle_add(_do)
+        GLib.idle_add(lambda: self.log_buffer.set_text("") or False)
 
-    # ---------- Scanning ----------
+    def toast(self, text):
+        self.toasts.add_toast(Adw.Toast(title=text, timeout=3))
+
+    def _busy(self, busy):
+        self.act_rescan.set_enabled(not busy)
+
+    def _show_empty(self, no_drive=False):
+        if no_drive:
+            self.empty_title.set_label("Aucun lecteur DVD")
+            self.empty_sub.set_label("Branchez un lecteur, insérez un DVD, puis lancez l'analyse.")
+        else:
+            self.empty_title.set_label("Insérez un DVD")
+            self.empty_sub.set_label("Le film est détecté automatiquement.")
+        self.stack.set_visible_child_name("empty")
+
+    def _show_error(self, title, sub, retry_label="Réessayer"):
+        self.err_title.set_label(title)
+        self.err_sub.set_label(sub)
+        self.btn_retry.set_label(retry_label)
+        self.stack.set_visible_child_name("error")
+
+    # ================================================================
+    #  Analyse du disque (moteur inchangé)
+    # ================================================================
     def start_scan(self):
         if self.scanning or self.encoding:
             return
         if self.hb is None:
-            self.show_error("HandBrakeCLI introuvable.\n"
-                            "Installez : sudo dnf install HandBrake HandBrake-cli")
+            self.stack.set_visible_child_name("missing")
             return
-        if not os.path.exists("/dev/sr0"):
-            self.show_error("Aucun lecteur DVD détecté (/dev/sr0).\nInsérez un DVD.")
+        if not os.path.exists(self.DRIVE):
+            self._show_empty(no_drive=True)
             return
-
         self.scanning = True
-        self.btn_rip.set_sensitive(False)
-        self.btn_refresh.set_sensitive(False)
-        self.btn_resume.set_sensitive(False)
-        self.status.set_label("Analyse du DVD…")
-        self.progress.set_fraction(0.0)
-        self.progress.set_text("…")
-        self.out_label.set_label("")
+        self._busy(True)
+        self.stack.set_visible_child_name("scanning")
         self._clear_log()
         self._append_log("=== SCAN DU DVD ===\n")
-
         threading.Thread(target=self._scan_worker, daemon=True).start()
 
     def _run_scan(self, args):
         """Lance un scan HandBrakeCLI et renvoie sa sortie complète."""
-        proc = subprocess.Popen(
-            self.hb + args,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
-        )
+        proc = subprocess.Popen(self.hb + args, stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT, text=True)
         lines = []
         for line in proc.stdout:
             lines.append(line)
@@ -427,41 +597,27 @@ class RipdvdWindow(Adw.ApplicationWindow):
 
     def _scan_worker(self):
         try:
-            drive = "/dev/sr0"
-            # Scan rapide : seulement le film principal, sans génération d'aperçus.
-            self._append_log(
-                f"Lancement : {' '.join(self.hb)} -i {drive} --main-feature "
-                f"(scan rapide, sans aperçus)\n"
-            )
-            scan0 = self._run_scan(
-                ["-i", drive, "--scan", "--main-feature", "--previews", "0"]
-            )
+            drive = self.DRIVE
+            self._append_log(f"Lancement : {' '.join(self.hb)} -i {drive} --main-feature "
+                             f"(scan rapide, sans aperçus)\n")
+            scan0 = self._run_scan(["-i", drive, "--scan", "--main-feature", "--previews", "0"])
             best_title, best_ms = parse_title_scan(scan0)
 
             if best_ms == 0:
-                # Repli : analyse complète, toujours sans aperçus.
                 self._append_log("\n[Scan rapide sans résultat — analyse complète…]\n")
-                scan0 = self._run_scan(
-                    ["-i", drive, "--title", "0", "--previews", "0"]
-                )
+                scan0 = self._run_scan(["-i", drive, "--title", "0", "--previews", "0"])
                 best_title, best_ms = parse_title_scan(scan0)
 
             if best_ms == 0:
                 with open(DEBUG_LOG, "w") as f:
                     f.write(scan0)
-                GLib.idle_add(self._scan_failed,
-                              "Impossible d'analyser le DVD.\n"
-                              "Vérifiez libdvdcss (DVD chiffré) ou le lecteur.\n"
-                              f"Log : {DEBUG_LOG}")
+                GLib.idle_add(self._scan_failed)
                 return
 
             self.best_title = best_title
             self.best_dur_min = best_ms // 60000
-
-            # Parse tracks from the same full scan
             audio, subs = parse_tracks_for_title(scan0, best_title)
-            self.audio_tracks = audio
-            self.sub_tracks = subs
+            self.audio_tracks, self.sub_tracks = audio, subs
 
             with open(DEBUG_LOG, "w") as f:
                 f.write(f"=== TITLE {best_title} ({best_ms} ms) ===\n")
@@ -473,92 +629,93 @@ class RipdvdWindow(Adw.ApplicationWindow):
             self._append_log(f"→ {len(audio)} piste(s) audio, {len(subs)} piste(s) sous-titres.\n")
             GLib.idle_add(self._scan_done)
         except Exception as e:
-            GLib.idle_add(self._scan_failed, f"Erreur de scan :\n{e}")
+            self._append_log(f"\nErreur de scan : {e}\n")
+            GLib.idle_add(self._scan_failed)
 
     def _scan_done(self):
         self.scanning = False
-        self.btn_rip.set_sensitive(True)
-        self.btn_refresh.set_sensitive(True)
-        self.btn_resume.set_sensitive(True)
+        self._busy(False)
 
-        labels = [a[1] for a in self.audio_tracks]
-        self._set_combo_items(self.audio_combo, labels if labels else ["(aucune)"])
-
+        self._set_model(self.audio_row, friendly_list([a[1] for a in self.audio_tracks]) or ["(aucune)"])
         default_idx = 0
-        for i, (idx, label) in enumerate(self.audio_tracks):
+        for i, (_idx, label) in enumerate(self.audio_tracks):
             low = label.lower()
             if "fran" in low or "fra" in low:
                 default_idx = i
                 break
         else:
-            for i, (idx, label) in enumerate(self.audio_tracks):
+            for i, (_idx, label) in enumerate(self.audio_tracks):
                 if "english" in label.lower() or "eng" in label.lower():
                     default_idx = i
                     break
         if self.audio_tracks:
-            self.audio_combo.set_selected(default_idx)
+            self.audio_row.set_selected(default_idx)
 
-        sub_labels = ["Aucun"] + [s[1] for s in self.sub_tracks]
-        self._set_combo_items(self.sub_combo, sub_labels)
-        self.sub_combo.set_selected(0)
+        self._set_model(self.sub_row, ["Aucun"] + friendly_list([s[1] for s in self.sub_tracks]))
+        self.sub_row.set_selected(0)
 
-        self.status.set_label(f"Titre {self.best_title} détecté ({self.best_dur_min} min). Prêt.")
-        self.progress.set_fraction(0.0)
-        self.progress.set_text("0 %")
+        n = len(self.audio_tracks)
+        self.ready_sub.set_label(
+            f"{human_duration(self.best_dur_min)}  ·  {n} piste{'s' if n > 1 else ''} audio")
+        self.stack.set_visible_child_name("ready")
+        return False
 
-    def _scan_failed(self, msg):
+    def _scan_failed(self):
         self.scanning = False
-        self.btn_rip.set_sensitive(True)
-        self.btn_refresh.set_sensitive(True)
-        self.btn_resume.set_sensitive(True)
-        self.status.set_label("Échec du scan.")
-        self._append_log(f"\n❌ {msg}\n")
-        self.show_error(msg)
+        self._busy(False)
+        self._show_error("Disque illisible",
+                         "Le disque est peut-être protégé (libdvdcss requis), rayé, "
+                         "ou le lecteur n'est pas prêt.", "Analyser à nouveau")
+        self._retry_is_scan = True
+        return False
 
-    # ---------- Encoding ----------
-    def on_rip_clicked(self, _btn):
+    # ================================================================
+    #  Numérisation (commande HandBrake inchangée)
+    # ================================================================
+    def on_rip_clicked(self):
         if self.encoding or self.scanning:
             return
-        if self.hb is None:
-            self.show_error("HandBrakeCLI introuvable.")
-            return
-        if not os.path.exists("/dev/sr0"):
-            self.show_error("Aucun lecteur DVD détecté.")
-            return
         if not self.audio_tracks:
-            self.show_error("Aucune piste audio détectée.\nRescannez le DVD.")
+            self.start_scan()
             return
-
-        self.encoding = True
-        self.btn_rip.set_sensitive(False)
-        self.btn_stop.set_sensitive(True)
-        self.btn_refresh.set_sensitive(False)
-        self.btn_resume.set_sensitive(False)
-        self.status.set_label("Encodage en cours…")
-        self.progress.set_fraction(0.0)
-        self.progress.set_text("0 %")
-        self.out_label.set_label("")
-        self._clear_log()
-        self._append_log("=== ENCODAGE ===\n")
-
-        threading.Thread(target=self._encode_worker, daemon=True).start()
-
-    def _encode_worker(self):
-        audio_idx = self.audio_tracks[self._combo_index(self.audio_combo)][0]
-        sub_sel = self._combo_index(self.sub_combo)
-        sub_idx = None
-        if sub_sel > 0 and self.sub_tracks:
-            sub_idx = self.sub_tracks[sub_sel - 1][0]
-
-        # Save params for resume
+        audio_idx = self.audio_tracks[self._row_index(self.audio_row)][0]
+        sub_sel = self._row_index(self.sub_row)
+        sub_idx = self.sub_tracks[sub_sel - 1][0] if sub_sel > 0 and self.sub_tracks else None
         self.last_encode_params = (self.best_title, audio_idx, sub_idx)
+        self._start_encode(resume=False)
 
-        name = f"DVD_{datetime.now():%Y%m%d_%H%M%S}"
+    def on_retry_clicked(self):
+        if getattr(self, "_retry_is_scan", False) or self.last_encode_params is None:
+            self.start_scan()
+        else:
+            self._start_encode(resume=True)
+
+    def _start_encode(self, resume):
+        if self.encoding or self.scanning:
+            return
+        if not os.path.exists(self.DRIVE):
+            self._show_empty(no_drive=True)
+            return
+        self._retry_is_scan = False
+        self.encoding = True
+        self.stop_requested = False
+        self._busy(True)
+        self.btn_stop.set_sensitive(True)
+        self._update_progress(0.0)
+        self.eta_label.set_label("Calcul du temps restant…")
+        self.stack.set_visible_child_name("encoding")
+        self._clear_log()
+        self._append_log("=== REPRISE DE L'ENCODAGE ===\n" if resume else "=== ENCODAGE ===\n")
+        threading.Thread(target=self._encode_worker, args=(resume,), daemon=True).start()
+
+    def _encode_worker(self, resume):
+        _title, audio_idx, sub_idx = self.last_encode_params
+        name = f"DVD_{datetime.now():%Y%m%d_%H%M%S}" + ("_resume" if resume else "")
         os.makedirs(OUT_DIR, exist_ok=True)
         outfile = os.path.join(OUT_DIR, f"{name}.mkv")
 
         cmd = self.hb + [
-            "-i", "/dev/sr0",
+            "-i", self.DRIVE,
             "--main-feature",
             "-o", outfile,
             "--preset", "Fast 480p30",
@@ -570,15 +727,14 @@ class RipdvdWindow(Adw.ApplicationWindow):
         ]
         if sub_idx is not None:
             cmd += ["--subtitle", str(sub_idx)]
-
         self._append_log("Commande : " + " ".join(cmd) + "\n\n")
 
         try:
-            self.process = subprocess.Popen(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
-            )
+            self.process = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                            stderr=subprocess.STDOUT, text=True)
         except Exception as e:
-            GLib.idle_add(self._encode_failed, f"Échec du lancement :\n{e}")
+            self._append_log(f"Échec du lancement : {e}\n")
+            GLib.idle_add(self._encode_failed)
             return
 
         tail = []
@@ -589,300 +745,127 @@ class RipdvdWindow(Adw.ApplicationWindow):
             self._append_log(line)
             m = re.search(r",\s*([\d.]+)\s*%", line)
             if m:
-                pct = float(m.group(1))
-                GLib.idle_add(self._update_progress, pct)
+                GLib.idle_add(self._update_progress, float(m.group(1)))
+            e = re.search(r"ETA (\d+)h(\d+)m(\d+)s", line)
+            if e:
+                GLib.idle_add(self.eta_label.set_label, human_eta(*map(int, e.groups())))
 
         self.process.wait()
         rc = self.process.returncode
         self.process = None
 
         with open(DEBUG_LOG, "a") as f:
-            f.write(f"\n\n=== ENCODE (rc={rc}) ===\n")
+            f.write(f"\n\n=== {'RESUME' if resume else 'ENCODE'} (rc={rc}) ===\n")
             f.write("CMD: " + " ".join(cmd) + "\n")
             f.write("".join(tail))
 
-        if rc != 0:
-            tail_text = "".join(tail[-20:]).strip()
-            GLib.idle_add(self._encode_failed,
-                          f"Échec de l'encodage (code {rc}).\n\n"
-                          f"Dernières lignes :\n{tail_text}\n\n"
-                          f"Log complet : {DEBUG_LOG}")
+        if rc != 0 or not os.path.isfile(outfile) or os.path.getsize(outfile) == 0:
+            self._append_log(f"\n❌ Échec (code {rc}). Log complet : {DEBUG_LOG}\n")
+            GLib.idle_add(self._encode_failed)
             return
-        if not os.path.isfile(outfile) or os.path.getsize(outfile) == 0:
-            tail_text = "".join(tail[-20:]).strip()
-            GLib.idle_add(self._encode_failed,
-                          f"Fichier de sortie vide ou absent.\n\n"
-                          f"Dernières lignes :\n{tail_text}\n\n"
-                          f"Log complet : {DEBUG_LOG}")
-            return
+        GLib.idle_add(self._encode_ok, outfile, self._human_size(os.path.getsize(outfile)))
 
-        size = self._human_size(os.path.getsize(outfile))
-        GLib.idle_add(self._encode_ok, outfile, size)
+    def _update_progress(self, pct):
+        self.progress.set_fraction(pct / 100.0)
+        self.pct_label.set_label(f"{int(pct)} %")
+        return False
 
-    def on_stop_clicked(self, _btn):
+    def on_stop_clicked(self, _btn=None):
         if self.process is not None:
+            self.stop_requested = True
+            self.btn_stop.set_sensitive(False)
+            self.eta_label.set_label("Arrêt en cours…")
             try:
                 self.process.terminate()
                 self._append_log("\n⚠ Arrêt demandé par l'utilisateur.\n")
             except Exception:
                 pass
-        self.status.set_label("Arrêt demandé…")
-
-    def on_resume_clicked(self, _btn):
-        """Resume/retry the last encode with the same parameters."""
-        if self.encoding or self.scanning:
-            return
-        if self.hb is None:
-            self.show_error("HandBrakeCLI introuvable.")
-            return
-        if not os.path.exists("/dev/sr0"):
-            self.show_error("Aucun lecteur DVD détecté.\nInsérez un DVD puis rescanner.")
-            return
-        if self.last_encode_params is None:
-            # No previous params: rescan first
-            self.start_scan()
-            return
-        # Re-encode with same params
-        self.encoding = True
-        self.btn_rip.set_sensitive(False)
-        self.btn_resume.set_sensitive(False)
-        self.btn_stop.set_sensitive(True)
-        self.btn_refresh.set_sensitive(False)
-        self.status.set_label("Reprise de l'encodage…")
-        self.progress.set_fraction(0.0)
-        self.progress.set_text("0 %")
-        self.out_label.set_label("")
-        self._clear_log()
-        self._append_log("=== REPRISE DE L'ENCODAGE ===\n")
-        threading.Thread(target=self._resume_worker, daemon=True).start()
-
-    def _resume_worker(self):
-        title, audio_idx, sub_idx = self.last_encode_params
-        name = f"DVD_{datetime.now():%Y%m%d_%H%M%S}_resume"
-        os.makedirs(OUT_DIR, exist_ok=True)
-        outfile = os.path.join(OUT_DIR, f"{name}.mkv")
-
-        cmd = self.hb + [
-            "-i", "/dev/sr0",
-            "--main-feature",
-            "-o", outfile,
-            "--preset", "Fast 480p30",
-            "--encoder", "x264",
-            "--quality", "20",
-            "--encoder-preset", "fast",
-            "--aencoder", "copy",
-            "--audio", str(audio_idx),
-        ]
-        if sub_idx is not None:
-            cmd += ["--subtitle", str(sub_idx)]
-
-        self._append_log("Commande : " + " ".join(cmd) + "\n\n")
-
-        try:
-            self.process = subprocess.Popen(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
-            )
-        except Exception as e:
-            GLib.idle_add(self._encode_failed, f"Échec du lancement :\n{e}")
-            return
-
-        tail = []
-        for line in self.process.stdout:
-            tail.append(line)
-            if len(tail) > 50:
-                tail.pop(0)
-            self._append_log(line)
-            m = re.search(r",\s*([\d.]+)\s*%", line)
-            if m:
-                pct = float(m.group(1))
-                GLib.idle_add(self._update_progress, pct)
-
-        self.process.wait()
-        rc = self.process.returncode
-        self.process = None
-
-        with open(DEBUG_LOG, "a") as f:
-            f.write(f"\n\n=== RESUME (rc={rc}) ===\n")
-            f.write("CMD: " + " ".join(cmd) + "\n")
-            f.write("".join(tail))
-
-        if rc != 0:
-            tail_text = "".join(tail[-20:]).strip()
-            GLib.idle_add(self._encode_failed,
-                          f"Échec de la reprise (code {rc}).\n\n"
-                          f"Dernières lignes :\n{tail_text}\n\n"
-                          f"Log complet : {DEBUG_LOG}")
-            return
-        if not os.path.isfile(outfile) or os.path.getsize(outfile) == 0:
-            tail_text = "".join(tail[-20:]).strip()
-            GLib.idle_add(self._encode_failed,
-                          f"Fichier de sortie vide ou absent.\n\n"
-                          f"Dernières lignes :\n{tail_text}\n\n"
-                          f"Log complet : {DEBUG_LOG}")
-            return
-
-        size = self._human_size(os.path.getsize(outfile))
-        GLib.idle_add(self._encode_ok, outfile, size)
-
-    def on_quit_clicked(self, _btn):
-        if self.process is not None:
-            try:
-                self.process.terminate()
-                self._append_log("\n⚠ Arrêt du processus en cours avant de quitter.\n")
-            except Exception:
-                pass
-        self.get_application().quit()
-
-    def on_about_clicked(self, _btn):
-        about = Gtk.Window(transient_for=self, modal=True, title="À propos de RipDvD")
-        about.set_default_size(600, 720)
-
-        header = Adw.HeaderBar()
-        header.set_title_widget(Gtk.Label(label="À propos de RipDvD"))
-        about.set_titlebar(header)
-
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        about.set_child(scrolled)
-
-        content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        content.set_margin_top(18)
-        content.set_margin_bottom(18)
-        content.set_margin_start(22)
-        content.set_margin_end(22)
-        scrolled.set_child(content)
-
-        # --- Bandeau ---
-        hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        hero.add_css_class("hero")
-        name = Gtk.Label(label="RipDvD")
-        name.add_css_class("title-1")
-        name.add_css_class("hero-title")
-        hero.append(name)
-        ver = Gtk.Label(label="Version 1.2.2 — From disc to digital, effortlessly.")
-        ver.add_css_class("hero-sub")
-        hero.append(ver)
-        content.append(hero)
-
-        def add_section(title, body, link=None, link_label=None):
-            t = Gtk.Label()
-            t.set_markup(f"<b>{GLib.markup_escape_text(title)}</b>")
-            t.set_halign(Gtk.Align.START)
-            t.set_margin_top(16)
-            content.append(t)
-            b = Gtk.Label(label=body)
-            b.set_wrap(True)
-            b.set_xalign(0)
-            b.set_selectable(True)
-            content.append(b)
-            if link:
-                lb = Gtk.LinkButton(uri=link, label=link_label or link)
-                lb.set_halign(Gtk.Align.START)
-                lb.add_css_class("caption")
-                content.append(lb)
-
-        add_section(
-            "Développé par asblPixels",
-            "RipDvD est un projet libre créé et maintenu par asblPixels.",
-            "https://github.com/asblPixels", "github.com/asblPixels",
-        )
-        add_section(
-            "À propos de l'application",
-            "RipDvD transforme vos DVD en fichiers MKV en un seul clic. "
-            "Choisissez la langue audio et les sous-titres, puis lancez le rip : "
-            "le film est encodé en H.264 (qualité RF 20), à sa résolution d'origine, "
-            "avec ses chapitres, dans le dossier ~/Vidéos/Rips.",
-        )
-        add_section(
-            "Crédits et remerciements",
-            "• HandBrake — moteur d'encodage (handbrake.fr)\n"
-            "• libdvdcss / VideoLAN — déchiffrement des DVD (videolan.org)\n"
-            "• GNOME, GTK 4 et libadwaita — interface graphique (gnome.org)\n"
-            "• Fedora Project et RPM Fusion — distribution et paquets\n"
-            "• Python — langage de programmation (python.org)",
-        )
-        add_section(
-            "Licence",
-            "RipDvD est un logiciel libre distribué sous licence MIT. "
-            "Vous pouvez l'utiliser, le copier, le modifier et le redistribuer "
-            "librement, à condition de conserver la mention de copyright et la licence.",
-            "https://github.com/asblPixels/ripdvd/blob/main/LICENSE",
-            "Lire la licence MIT complète",
-        )
-        add_section(
-            "Vie privée",
-            "Aucune donnée personnelle n'est collectée, transmise ni vendue. "
-            "Tout le traitement se fait localement sur votre ordinateur : "
-            "l'application n'effectue aucune connexion réseau.",
-        )
-        add_section(
-            "Mentions légales",
-            "RipDvD est conçu pour sauvegarder des DVD que vous possédez légalement. "
-            "Le déchiffrement de disques protégés peut être interdit ou restreint "
-            "dans certains pays. Il vous appartient de vérifier la législation en vigueur. "
-            "Les auteurs ne sauraient être tenus responsables d'un usage illégal.",
-        )
-        add_section(
-            "Sources et support",
-            "Code source, documentation, wiki et signalement de bugs :\n"
-            f"Journal de débogage : {DEBUG_LOG}",
-            "https://github.com/asblPixels/ripdvd",
-            "github.com/asblPixels/ripdvd",
-        )
-
-        foot = Gtk.Label(label="© 2026 asblPixels — Tous droits réservés. Projet open source sous licence MIT.")
-        foot.add_css_class("caption")
-        foot.add_css_class("brand-caption")
-        foot.set_halign(Gtk.Align.CENTER)
-        foot.set_margin_top(18)
-        content.append(foot)
-
-        close = Gtk.Button(label="Fermer")
-        close.add_css_class("suggested-action")
-        close.add_css_class("pill")
-        close.set_halign(Gtk.Align.CENTER)
-        close.set_margin_top(10)
-        close.connect("clicked", lambda _b: about.close())
-        content.append(close)
-
-        about.present()
-
-    def _update_progress(self, pct):
-        self.progress.set_fraction(pct / 100.0)
-        self.progress.set_text(f"{pct:.1f} %")
 
     def _encode_ok(self, outfile, size):
         self.encoding = False
-        self.btn_rip.set_sensitive(True)
-        self.btn_stop.set_sensitive(False)
-        self.btn_refresh.set_sensitive(True)
-        self.btn_resume.set_sensitive(True)
-        self.status.set_label("Terminé ✅")
-        self.progress.set_fraction(1.0)
-        self.progress.set_text("100 %")
-        self.out_label.set_label(f"{outfile}\n({size})")
+        self._busy(False)
+        self.last_outfile = outfile
+        self.done_sub.set_label(f"{os.path.basename(outfile)}  ·  {size}")
+        self.stack.set_visible_child_name("done")
         self._append_log(f"\n✅ Terminé : {outfile} ({size})\n")
         notif = Gio.Notification.new("RipDvD")
-        notif.set_body(f"Encodage terminé : {os.path.basename(outfile)} ({size})")
+        notif.set_body(f"Film enregistré : {os.path.basename(outfile)} ({size})")
         self.get_application().send_notification("ripdvd-done", notif)
+        return False
 
-    def _encode_failed(self, msg):
+    def _encode_failed(self):
         self.encoding = False
-        self.btn_rip.set_sensitive(True)
-        self.btn_stop.set_sensitive(False)
-        self.btn_refresh.set_sensitive(True)
-        self.btn_resume.set_sensitive(True)
-        self.status.set_label("Erreur")
-        self.progress.set_fraction(0.0)
-        self.progress.set_text("0 %")
-        self._append_log(f"\n❌ {msg}\n")
-        self.show_error(msg)
+        self._busy(False)
+        if self.stop_requested:
+            self._show_error("Numérisation arrêtée",
+                             "Vous pouvez la relancer avec les mêmes réglages.", "Reprendre")
+        else:
+            self._show_error("La numérisation a échoué",
+                             "Vérifiez le disque et l'espace libre, puis réessayez.")
+        return False
 
-    def show_error(self, msg):
-        dialog = Adw.AlertDialog.new("Erreur", msg)
-        dialog.add_response("ok", "OK")
-        dialog.set_default_response("ok")
+    # ================================================================
+    #  Actions secondaires
+    # ================================================================
+    def open_folder(self):
+        os.makedirs(OUT_DIR, exist_ok=True)
+        try:
+            Gio.AppInfo.launch_default_for_uri(Gio.File.new_for_path(OUT_DIR).get_uri(), None)
+        except Exception:
+            self.toast(f"Dossier : {OUT_DIR}")
+
+    def _on_close_request(self, _win):
+        if self.process is None:
+            return False
+        dialog = Adw.AlertDialog.new("Arrêter la numérisation ?",
+                                     "Le film en cours ne sera pas enregistré.")
+        dialog.add_response("cancel", "Continuer")
+        dialog.add_response("quit", "Arrêter et quitter")
+        dialog.set_response_appearance("quit", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("cancel")
+        dialog.set_close_response("cancel")
+
+        def on_response(_d, resp):
+            if resp == "quit":
+                if self.process is not None:
+                    try:
+                        self.process.terminate()
+                    except Exception:
+                        pass
+                self.get_application().quit()
+        dialog.connect("response", on_response)
         dialog.present(self)
+        return True
+
+    def show_about(self):
+        about = Adw.AboutDialog(
+            application_name="RipDvD",
+            application_icon="ripdvd",
+            developer_name="Pixel's ASBL",
+            version=VERSION,
+            comments="Vos DVD, sauvés en un clic.\n"
+                     "Numérise le film principal d'un DVD en fichier MKV, "
+                     "avec son son d'origine et ses chapitres.",
+            website="https://github.com/asblPixels/ripdvd",
+            issue_url="https://github.com/asblPixels/ripdvd/issues",
+            license_type=Gtk.License.MIT_X11,
+            copyright="© 2026 Pixel's ASBL — Boussu",
+        )
+        about.add_credit_section("Construit avec", [
+            "HandBrake https://handbrake.fr",
+            "libdvdcss (VideoLAN) https://www.videolan.org",
+            "GTK 4 et libadwaita https://gnome.org",
+        ])
+        about.add_legal_section(
+            "Vie privée", None, Gtk.License.CUSTOM,
+            "Aucune donnée n'est collectée ni transmise : tout se passe sur votre ordinateur.")
+        about.add_legal_section(
+            "Usage", None, Gtk.License.CUSTOM,
+            "RipDvD sert à copier des DVD que vous possédez, pour votre foyer. "
+            "Le déchiffrement des disques protégés peut être restreint dans votre pays.")
+        about.set_debug_info(f"HandBrake : {self.hb_source or 'introuvable'}\n"
+                             f"Journal : {DEBUG_LOG}\nSortie : {OUT_DIR}")
+        about.present(self)
 
     @staticmethod
     def _human_size(n):
@@ -897,10 +880,16 @@ class RipdvdApp(Adw.Application):
     def __init__(self):
         super().__init__(application_id=APP_ID, flags=Gio.ApplicationFlags.FLAGS_NONE)
 
+    def do_startup(self):
+        Adw.Application.do_startup(self)
+        self.set_accels_for_action("win.quit", ["<Control>q"])
+        self.set_accels_for_action("win.rescan", ["<Control>r"])
+        self.set_accels_for_action("win.show-log", ["<Control>l"])
+
     def do_activate(self):
         install_theme()
         Gtk.Window.set_default_icon_name("ripdvd")
-        win = RipdvdWindow(self)
+        win = self.props.active_window or RipdvdWindow(self)
         win.present()
 
 

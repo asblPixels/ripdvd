@@ -62,20 +62,15 @@ Pendant ce temps, vos DVD prennent la poussière. RipDvD en fait la première br
 
 ## 🎯 Fonctionnalités
 
-- 🖱️ **Rippage en un clic** — insérez un DVD, cliquez sur *Rip DVD*, obtenez un MKV prêt à streamer.
+- 🖱️ **Un seul clic** — insérez un DVD : le film est détecté, la langue est déjà choisie, il ne reste qu'à cliquer sur *Numériser le film*.
 - ⚡ **Scan instantané** — seul le film principal est analysé, sans génération d'aperçus (3 à 10× plus rapide).
 - 🔍 **Détection automatique du titre** — sélectionne le titre le plus long (le film principal).
-- 🌍 **Audio multilingue** — détecte toutes les pistes audio ; français par défaut, puis anglais.
-- 💬 **Sous-titres** — passthrough optionnel de toute piste de sous-titres (VobSub), ou aucun.
+- 🌍 **Langues à portée de main** — audio et sous-titres choisis juste au-dessus du bouton, avec des noms lisibles (« Français · 5.1 ») ; français par défaut, puis anglais.
 - 📑 **Marqueurs de chapitres** — préservés dans le MKV pour une navigation facile dans Jellyfin/Kodi.
-- 📺 **Fenêtre de sortie en direct** — log HandBrakeCLI en temps réel avec auto-scroll.
-- 📊 **Barre de progression** — pourcentage mis à jour en direct pendant l'encodage.
-- ⏸️ **Bouton Arrêter** — annule un encodage en cours à tout moment.
-- 🔄 **Bouton Reprendre** — relance le dernier encodage avec les mêmes paramètres.
-- 🚪 **Bouton Quitter** — ferme l'application proprement (arrête tout encodage en cours).
-- 🔄 **Bouton Rescanner** — ré-analyse le disque sans redémarrer l'application.
-- 🧹 **Effacer le log** — vide la fenêtre de sortie en direct.
-- 🎨 **Apparence GNOME native** — GTK4 + libadwaita, avec l'identité turquoise asblPixels.
+- 📊 **Progression claire** — grand pourcentage et temps restant estimé.
+- ⏸️ **Arrêter / Reprendre** — interrompez à tout moment, relancez avec les mêmes réglages.
+- 🧹 **Interface épurée** — options secondaires (analyse, dossier des films, journal) rangées dans le menu ☰.
+- 🎨 **Apparence GNOME native** — GTK4 + libadwaita, thème clair et sombre, accent turquoise asblPixels.
 - ℹ️ **Fenêtre À propos** — auteur, crédits, licence, confidentialité et mentions légales au même endroit.
 - 🧵 **Thread-safe** — toutes les mises à jour de l'interface sont envoyées au thread principal GTK.
 - 🐛 **Log de debug** — sortie complète sauvegardée dans `~/.ripdvd-debug.log`.
@@ -230,24 +225,23 @@ Les deux doivent afficher `OK`.
 
 ## 🎬 Utilisation
 
-1. Insérez un DVD dans votre lecteur.
-2. Lancez **RipDvD** depuis le menu GNOME (ou `python3 ~/.local/bin/ripdvd-gui.py`).
-3. L'application scanne le disque automatiquement et détecte le film principal (titre le plus long).
-4. Choisissez la **langue audio** et les **sous-titres** optionnels dans les listes déroulantes.
-5. Cliquez sur **Rip DVD**.
-6. Suivez la progression en direct dans la fenêtre de log.
-7. Le MKV final se trouve dans `~/Vidéos/Rips/` (ou `~/Videos/Rips/`).
+1. Insérez un DVD et lancez **RipDvD** : le disque est analysé automatiquement.
+2. L'écran **Film détecté** affiche la durée et propose la **langue audio** et les **sous-titres** (déjà réglés : français, sans sous-titres).
+3. Cliquez sur **Numériser le film**.
+4. Suivez le pourcentage et le temps restant. Le bouton **Arrêter** interrompt la numérisation.
+5. À la fin, cliquez sur **Ouvrir le dossier** : le MKV se trouve dans `~/Vidéos/Rips/`.
 
-### Boutons
+### Le menu ☰
 
-| Bouton | Action |
-|---|---|
-| **Rip DVD** | Démarre l'encodage du titre sélectionné. |
-| **Arrêter** | Annule l'encodage en cours. |
-| **Reprendre** | Relance le dernier encodage avec les mêmes paramètres. |
-| **Quitter** | Ferme l'application (arrête tout encodage en cours). |
-| **Rescanner** | Ré-analyse le disque (utile après avoir changé de DVD). |
-| **Effacer log** | Vide la fenêtre de sortie en direct. |
+| Entrée | Raccourci | Action |
+|---|---|---|
+| **Analyser le disque** | Ctrl+R | Ré-analyse le disque (utile après avoir changé de DVD). |
+| **Ouvrir le dossier des films** | — | Ouvre `~/Vidéos/Rips/`. |
+| **Afficher le journal** | Ctrl+L | Affiche la sortie HandBrakeCLI en direct. |
+| **À propos de RipDvD** | — | Version, crédits, licence, vie privée. |
+| **Quitter** | Ctrl+Q | Ferme RipDvD (demande confirmation pendant une numérisation). |
+
+En cas d'échec ou d'arrêt, l'écran propose **Réessayer** / **Reprendre** avec les mêmes réglages.
 
 ### Version CLI
 

@@ -62,20 +62,15 @@ Meanwhile, your DVDs are gathering dust. RipDvD turns them into the first brick 
 
 ## 🎯 Features
 
-- 🖱️ **One-click ripping** — insert a DVD, click *Rip DVD*, get a ready-to-stream MKV.
+- 🖱️ **One click** — insert a DVD: the movie is detected, the language is pre-selected, just click *Numériser le film* (Digitise the movie).
 - ⚡ **Instant scan** — only the main movie is analysed, no preview generation (3–10× faster).
 - 🔍 **Automatic title detection** — picks the longest title (the main movie) automatically.
-- 🌍 **Multi-language audio** — detects every audio track; French preferred by default, then English.
-- 💬 **Subtitles** — optional passthrough of any subtitle track (VobSub), or none.
+- 🌍 **Languages at hand** — audio and subtitles chosen right above the button, with readable names ("Français · 5.1"); French by default, then English.
 - 📑 **Chapter markers** — preserved in the MKV for easy navigation in Jellyfin/Kodi.
-- 📺 **Live output window** — real-time HandBrakeCLI log (tail) with auto-scroll.
-- 📊 **Progress bar** — percentage updated live during encoding.
-- ⏸️ **Stop button** — cancel an in-progress encode at any time.
-- 🔄 **Resume button** — retry the last encode with the same parameters.
-- 🚪 **Quit button** — close the app cleanly (stops any running encode first).
-- 🔄 **Rescan button** — re-analyse the disc without restarting the app.
-- 🧹 **Clear log** — clear the live output window.
-- 🎨 **Native GNOME look** — GTK4 + libadwaita, with the asblPixels turquoise identity.
+- 📊 **Clear progress** — large percentage and estimated time remaining.
+- ⏸️ **Stop / Resume** — interrupt at any time, restart with the same settings.
+- 🧹 **Clean interface** — secondary options (rescan, movies folder, log) live in the ☰ menu.
+- 🎨 **Native GNOME look** — GTK4 + libadwaita, light and dark themes, asblPixels turquoise accent.
 - ℹ️ **About window** — author, credits, license, privacy and legal notice in one place.
 - 🧵 **Thread-safe** — all UI updates marshalled to the GTK main thread.
 - 🐛 **Debug log** — full output saved to `~/.ripdvd-debug.log`.
@@ -228,24 +223,23 @@ Get-Command HandBrakeCLI
 
 ## 🎬 Usage
 
-1. Insert a DVD into your drive.
-2. Launch **RipDvD** from the GNOME application menu (or `python3 ~/.local/bin/ripdvd-gui.py`).
-3. The app scans the disc automatically and detects the main movie (longest title).
-4. Pick the **audio language** and optional **subtitles** from the dropdowns.
-5. Click **Rip DVD**.
-6. Watch the live progress in the log window.
-7. The finished MKV lands in `~/Vidéos/Rips/` (or `~/Videos/Rips/`).
+1. Insert a DVD and launch **RipDvD**: the disc is scanned automatically.
+2. The **Film détecté** (movie detected) screen shows the runtime and offers the **audio language** and **subtitles** (pre-set: French, no subtitles).
+3. Click **Numériser le film**.
+4. Follow the percentage and time remaining. **Arrêter** stops the encode.
+5. When done, click **Ouvrir le dossier**: the MKV is in `~/Vidéos/Rips/`.
 
-### Buttons
+### The ☰ menu
 
-| Button | Action |
-|---|---|
-| **Rip DVD** | Start encoding the selected title. |
-| **Arrêter** | Cancel the current encode. |
-| **Reprendre** | Resume/retry the last encode with the same parameters. |
-| **Quitter** | Close the application (stops any running encode first). |
-| **Rescanner** | Re-analyse the disc (useful after swapping DVDs). |
-| **Effacer log** | Clear the live output window. |
+| Entry | Shortcut | Action |
+|---|---|---|
+| **Analyser le disque** | Ctrl+R | Re-scan the disc (after swapping DVDs). |
+| **Ouvrir le dossier des films** | — | Open `~/Vidéos/Rips/`. |
+| **Afficher le journal** | Ctrl+L | Show the live HandBrakeCLI output. |
+| **À propos de RipDvD** | — | Version, credits, license, privacy. |
+| **Quitter** | Ctrl+Q | Close RipDvD (asks for confirmation during an encode). |
+
+After a failure or a stop, the screen offers **Réessayer** / **Reprendre** with the same settings.
 
 ### CLI version
 

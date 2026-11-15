@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - CI status badge in the READMEs and a ready-to-use social preview image (`data/social-preview.png`, 1280×640).
 
+## [1.3.0] - 2026-11-15
+
+### Changed
+- **Complete redesign of the Linux interface** (GTK4/libadwaita): one screen per step (insert disc → movie detected → digitising → done), generous whitespace, no hero banner, no heavy borders, light and dark themes.
+- **One-click flow kept**: the main action *Numériser le film* sits right under the audio/subtitle choices, which are pre-selected (French, no subtitles).
+- Readable track names ("Français · 5.1" instead of "Piste 1 — Français (AC3) (5.1 ch)").
+- Large percentage with estimated time remaining (parsed from HandBrake's ETA).
+- Secondary actions (rescan, open movies folder, live log, about, quit) moved to a ☰ menu with shortcuts (Ctrl+R, Ctrl+L, Ctrl+Q); the log is a collapsible panel.
+- Errors and interruptions shown as a calm screen with *Réessayer* / *Reprendre* instead of a raw error dialog; closing during an encode asks for confirmation.
+- About window replaced by the standard libadwaita About dialog.
+- Encoding engine and HandBrake command unchanged.
+
 ## [1.2.2] - 2026-11-15
 
 ### Changed
