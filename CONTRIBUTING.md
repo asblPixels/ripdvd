@@ -49,3 +49,29 @@ cd ripdvd
 sudo dnf install python3 python3-gobject gtk4 libadwaita zenity HandBrake HandBrake-cli
 python3 src/ripdvd.py
 ```
+
+## Maintenance & release checklist
+
+Before publishing a release:
+
+1. Bump the version in `src/ripdvd.py` and `src/ripdvd-win.py` (About window).
+2. Update `CHANGELOG.md` and `docs/wiki/Changelog.md`.
+3. Run the checks locally:
+   ```bash
+   python3 -m py_compile src/ripdvd.py src/ripdvd-win.py
+   bash -n scripts/*.sh
+   ```
+4. Merge into `main`, then keep `arch`, `ubuntu`, `debian` and `windows` in sync:
+   ```bash
+   for br in arch ubuntu debian windows; do
+       git checkout "$br" && git merge main --no-edit && git push origin "$br"
+   done
+   git checkout main
+   ```
+5. Create the GitHub release with the changelog as release notes.
+6. Check that CI is green on every branch.
+
+### Automated checks
+
+`.github/workflows/ci.yml` verifies Python syntax, shell scripts and catches the
+blank-window regression (missing `self.set_content(box)`). Never bypass it.
