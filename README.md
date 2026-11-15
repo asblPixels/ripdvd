@@ -125,6 +125,8 @@ bash scripts/install-<distro>.sh   # or .ps1 on Windows
 
 ## 🚀 Installation
 
+> 📘 **Step-by-step manual (PDF, French, all platforms)**: [docs/manuel/Manuel-installation-RipDvD.pdf](docs/manuel/Manuel-installation-RipDvD.pdf)
+
 ### ⚡ One-line install (recommended)
 
 **Copy-paste this single command into your terminal:**
