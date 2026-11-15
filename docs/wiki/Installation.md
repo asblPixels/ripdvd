@@ -1,6 +1,22 @@
 # Installation
 
-This page provides detailed installation instructions for all supported systems.
+## ⚡ One-line install (Linux)
+
+**Copy-paste this single command into your terminal:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/asblPixels/ripdvd/main/scripts/install-linux.sh | bash
+```
+
+That's it! The installer will:
+1. Detect your Linux distribution automatically.
+2. Install all required dependencies.
+3. Download and install RipDvD.
+4. Set up a menu entry.
+
+> **No technical knowledge required.** Just paste and press Enter.
+
+---
 
 ## Prerequisites
 
@@ -139,7 +155,17 @@ python3 ~/.local/bin/ripdvd-gui.py
 
 ## Windows (windows branch)
 
-### Step 1 — Install Python
+### ⚡ One-click install (Windows)
+
+**No technical knowledge required!** Just 3 steps:
+
+1. **Download** the ZIP: https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip
+2. **Extract** it to a folder (e.g., your Desktop).
+3. **Double-click** `install-windows.bat` and follow the on-screen instructions.
+
+That's it! A **RipDvD** shortcut will appear on your Desktop.
+
+### Manual installation
 
 Download and install Python 3.10+ from https://www.python.org/downloads/
 Make sure to check **"Add Python to PATH"** during installation.

@@ -107,7 +107,23 @@ bash scripts/install-<distro>.sh   # 或 Windows 上使用 .ps1
 
 ## 🚀 安装
 
-### 步骤 1 — 下载
+### ⚡ 一行安装（推荐）
+
+**将这一行命令复制粘贴到终端：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/asblPixels/ripdvd/main/scripts/install-linux.sh | bash
+```
+
+就这样！安装程序将：
+1. 自动检测您的 Linux 发行版。
+2. 安装所有必需的依赖。
+3. 下载并安装 RipDvD。
+4. 设置菜单项。
+
+> **无需技术知识。** 复制、粘贴、按回车。
+
+### 步骤 1 — 下载（手动）
 
 ```bash
 git clone https://github.com/asblPixels/ripdvd.git
