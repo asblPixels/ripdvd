@@ -151,11 +151,73 @@ python3 ~/.local/bin/ripdvd-gui.py
 
 Ou cherchez **ripdvd** dans le menu d'applications GNOME.
 
-### Vérifier que tout fonctionne
+### Windows
+
+Pour Windows 10/11, utilisez la branche `windows` :
+
+```powershell
+git clone -b windows https://github.com/asblPixels/ripdvd.git
+cd ripdvd
+.\scripts\install-windows.ps1
+```
+
+Ou téléchargez le ZIP depuis https://github.com/asblPixels/ripdvd/archive/refs/heads/windows.zip
+
+#### Étape 1 — Installer Python
+
+1. Téléchargez Python 3.10+ depuis https://www.python.org/downloads/
+2. Lancez l'installateur.
+3. **Important** : cochez **"Add Python to PATH"** pendant l'installation.
+4. Vérifiez : ouvrez PowerShell et lancez `python --version`
+
+#### Étape 2 — Installer HandBrake
+
+1. Téléchargez HandBrake pour Windows depuis https://handbrake.fr/downloads.php
+2. Lancez l'installateur (emplacement par défaut : `C:\Program Files\HandBrake\`).
+3. Vérifiez : `Get-Command HandBrakeCLI` dans PowerShell.
+
+#### Étape 3 — Lancer l'installateur
+
+Ouvrez PowerShell (en tant qu'utilisateur courant, pas besoin d'admin) et lancez :
+
+```powershell
+cd ripdvd
+.\scripts\install-windows.ps1
+```
+
+L'installateur va :
+1. Vérifier que Python est installé et dans le PATH.
+2. Vérifier que HandBrakeCLI est disponible.
+3. Créer le dossier de sortie (`%USERPROFILE%\Videos\Rips`).
+4. Copier l'application dans `%LOCALAPPDATA%\ripdvd\ripdvd.py`.
+5. Créer un raccourci sur le Bureau et dans le menu Démarrer.
+
+#### Étape 4 — Lancer
+
+Double-cliquez sur le raccourci **ripdvd** sur le Bureau, ou cherchez **ripdvd** dans le menu Démarrer.
+
+Ou depuis PowerShell :
+```powershell
+python "$env:LOCALAPPDATA\ripdvd\ripdvd.py"
+```
+
+#### Notes Windows
+
+- La version Windows utilise **tkinter** (intégré à Python) au lieu de GTK4, donc l'interface a un aspect différent de la version Linux mais les mêmes fonctionnalités.
+- La détection du lecteur DVD est automatique (recherche des lecteurs CD-ROM). Si non détecté, entrez la lettre du lecteur manuellement (ex. `D:\`).
+- libdvdcss est inclus avec HandBrake pour Windows — pas d'installation séparée nécessaire.
+- Les fichiers de sortie sont sauvegardés dans `%USERPROFILE%\Videos\Rips\`.
+
+### Vérifier que tout fonctionne (toutes plateformes)
 
 ```bash
+# Linux
 python3 -c "import gi; gi.require_version('Gtk','4.0'); gi.require_version('Adw','1'); print('GTK4/Adw OK')"
 command -v HandBrakeCLI && echo "HandBrakeCLI OK"
+
+# Windows (PowerShell)
+python -c "import tkinter; print('tkinter OK')"
+Get-Command HandBrakeCLI
 ```
 
 Les deux doivent afficher `OK`.
