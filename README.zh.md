@@ -7,7 +7,7 @@
 **面向 Linux (Fedora / GNOME) 的极简开源 DVD 提取工具**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Fedora%20Linux-blue.svg)](https://fedoraproject.org/)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%26%20Windows-blue.svg)](https://github.com/asblPixels/ripdvd)
 [![Desktop](https://img.shields.io/badge/desktop-GNOME%2049-green.svg)](https://gnome.org/)
 [![GUI](https://img.shields.io/badge/GUI-GTK4%20%2F%20libadwaita-teal.svg)](https://gnome.org/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -24,19 +24,20 @@
 
 ## 📖 关于
 
-**RipDvD** 是一款免费、开源的 Linux DVD 提取应用程序。
-它在 [HandBrakeCLI](https://handbrake.fr/) 之上提供原生的 GNOME 图形界面（GTK4 / libadwaita），
+**RipDvD** 是一款免费、开源的 Linux 和 Windows DVD 提取应用程序。
+它在 [HandBrakeCLI](https://handbrake.fr/) 之上提供原生图形界面（Linux 上为 GTK4 / libadwaita，Windows 上为 tkinter），
 将您的 DVD 收藏转换为高质量的 MKV 文件，适用于家庭媒体服务器（Jellyfin、Kodi、Plex）。
 
 > **起源**：本项目由 **[asblPixels](https://github.com/asblPixels)** 创建并维护，
 > 作为其开源软件计划的一部分。采用 MIT 许可证发布，
 > 可自由使用、修改和分发。
 
-### ✨ 为什么选择 ripdvd？
+### ✨ 为什么选择 RipDvD？
 
-Linux 上的大多数 DVD 提取工具要么仅支持命令行，要么过于复杂，要么仅限 Windows。
-RipDvD 的目标是成为 **尽可能简单的工具**：插入光盘，点击一个按钮，获得完美的 MKV。
+大多数 DVD 提取工具要么仅支持命令行，要么过于复杂，要么仅限于特定平台，要么仅限 Windows。
+RipDvD 的目标是成为 **在任何地方都能工作的最简单工具**：插入光盘，点击一个按钮，获得完美的 MKV。
 无需配置，但需要时提供完全控制。
+支持 **Fedora、Arch、Ubuntu、Debian** (Linux) 和 **Windows 10/11**。
 
 ## 🎯 功能
 

@@ -7,7 +7,7 @@
 **Linux (Fedora / GNOME) 向けのミニマリストなオープンソース DVD リッピングツール**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Fedora%20Linux-blue.svg)](https://fedoraproject.org/)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%26%20Windows-blue.svg)](https://github.com/asblPixels/ripdvd)
 [![Desktop](https://img.shields.io/badge/desktop-GNOME%2049-green.svg)](https://gnome.org/)
 [![GUI](https://img.shields.io/badge/GUI-GTK4%20%2F%20libadwaita-teal.svg)](https://gnome.org/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -24,19 +24,20 @@
 
 ## 📖 概要
 
-**RipDvD** は Linux 向けの無料オープンソース DVD リッピングアプリケーションです。
-[HandBrakeCLI](https://handbrake.fr/) の上にネイティブな GNOME グラフィカルインターフェース（GTK4 / libadwaita）を提供し、
+**RipDvD** は Linux と Windows 向けの無料オープンソース DVD リッピングアプリケーションです。
+[HandBrakeCLI](https://handbrake.fr/) の上にネイティブ GUI（Linux では GTK4 / libadwaita、Windows では tkinter）を提供し、
 DVD コレクションを高品質な MKV ファイルに変換してホームメディアサーバー（Jellyfin、Kodi、Plex）で利用できます。
 
 > **由来**: このプロジェクトは **[asblPixels](https://github.com/asblPixels)** によって
 > オープンソースソフトウェアイニシアティブの一環として作成・維持されています。
 > MIT ライセンスの下で公開され、自由に使用、変更、配布できます。
 
-### ✨ なぜ ripdvd なのか？
+### ✨ なぜ RipDvD なのか？
 
-Linux のほとんどの DVD リッピングツールはコマンドラインのみ、複雑すぎる、または Windows 専用です。
-RipDvD は **可能な限りシンプルなツール**を目指しています：ディスクを挿入し、ボタンをクリックし、
+ほとんどの DVD リッピングツールはコマンドラインのみ、複雑すぎる、プラットフォームにロックされている、または Windows 専用です。
+RipDvD は **どこでも動作する可能な限りシンプルなツール**を目指しています：ディスクを挿入し、ボタンをクリックし、
 完璧な MKV を取得。設定不要ですが、必要に応じて完全な制御も可能です。
+**Fedora、Arch、Ubuntu、Debian** (Linux) および **Windows 10/11** で動作します。
 
 ## 🎯 機能
 

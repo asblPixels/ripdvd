@@ -7,7 +7,7 @@
 **Un rippeur de DVD minimaliste et open source pour Linux (Fedora / GNOME)**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Fedora%20Linux-blue.svg)](https://fedoraproject.org/)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%26%20Windows-blue.svg)](https://github.com/asblPixels/ripdvd)
 [![Desktop](https://img.shields.io/badge/desktop-GNOME%2049-green.svg)](https://gnome.org/)
 [![GUI](https://img.shields.io/badge/GUI-GTK4%20%2F%20libadwaita-teal.svg)](https://gnome.org/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -24,8 +24,8 @@
 
 ## 📖 À propos
 
-**RipDvD** est une application gratuite et open source de rippage de DVD pour Linux.
-Elle offre une interface graphique GNOME native (GTK4 / libadwaita) par-dessus
+**RipDvD** est une application gratuite et open source de rippage de DVD pour Linux et Windows.
+Elle offre une interface graphique native (GTK4 / libadwaita sous Linux, tkinter sous Windows) par-dessus
 [HandBrakeCLI](https://handbrake.fr/), transformant votre collection de DVD en fichiers MKV
 de haute qualité prêts pour votre serveur multimédia (Jellyfin, Kodi, Plex).
 
@@ -33,12 +33,13 @@ de haute qualité prêts pour votre serveur multimédia (Jellyfin, Kodi, Plex).
 > dans le cadre de son initiative logicielle open source. Il est publié sous licence MIT
 > et est libre d'utilisation, de modification et de distribution.
 
-### ✨ Pourquoi ripdvd ?
+### ✨ Pourquoi RipDvD ?
 
-La plupart des rippeurs de DVD sous Linux sont soit en ligne de commande uniquement, soit trop
-complexes, soit réservés à Windows. RipDvD vise à être **l'outil le plus simple possible** :
-insérez un disque, cliquez sur un bouton, obtenez un MKV parfait. Aucune configuration requise,
-mais un contrôle total si vous le souhaitez.
+La plupart des rippeurs de DVD sont soit en ligne de commande uniquement, soit trop complexes,
+soit verrouillés à une plateforme, soit réservés à Windows.
+RipDvD vise à être **l'outil le plus simple possible** qui fonctionne partout : insérez un disque, cliquez sur un bouton,
+obtenez un MKV parfait. Aucune configuration requise, mais un contrôle total si vous le souhaitez.
+Il fonctionne sur **Fedora, Arch, Ubuntu, Debian** (Linux) et **Windows 10/11**.
 
 ## 🎯 Fonctionnalités
 

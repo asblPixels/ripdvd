@@ -7,7 +7,7 @@
 **Un extractor de DVD minimalista y de código abierto para Linux (Fedora / GNOME)**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Fedora%20Linux-blue.svg)](https://fedoraproject.org/)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%26%20Windows-blue.svg)](https://github.com/asblPixels/ripdvd)
 [![Desktop](https://img.shields.io/badge/desktop-GNOME%2049-green.svg)](https://gnome.org/)
 [![GUI](https://img.shields.io/badge/GUI-GTK4%20%2F%20libadwaita-teal.svg)](https://gnome.org/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -24,8 +24,8 @@
 
 ## 📖 Acerca de
 
-**RipDvD** es una aplicación gratuita y de código abierto para extraer DVD en Linux.
-Proporciona una interfaz gráfica nativa de GNOME (GTK4 / libadwaita) sobre
+**RipDvD** es una aplicación gratuita y de código abierto para extraer DVD en Linux y Windows.
+Proporciona una interfaz gráfica nativa (GTK4 / libadwaita en Linux, tkinter en Windows) sobre
 [HandBrakeCLI](https://handbrake.fr/), convirtiendo tu colección de DVD en archivos MKV
 de alta calidad listos para tu servidor multimedia (Jellyfin, Kodi, Plex).
 
@@ -33,12 +33,12 @@ de alta calidad listos para tu servidor multimedia (Jellyfin, Kodi, Plex).
 > como parte de su iniciativa de software de código abierto. Se publica bajo licencia MIT
 > y es libre de usar, modificar y distribuir.
 
-### ✨ ¿Por qué ripdvd?
+### ✨ ¿Por qué RipDvD?
 
-La mayoría de los extractores de DVD en Linux son solo de línea de comandos, demasiado
-complejos o solo para Windows. RipDvD busca ser **la herramienta más simple posible**:
-inserta un disco, haz clic en un botón, obtén un MKV perfecto. Sin configuración necesaria,
-pero con control total si lo deseas.
+La mayoría de los extractores de DVD son solo de línea de comandos, demasiado complejos,
+bloqueados a una plataforma o solo para Windows. RipDvD busca ser **la herramienta más simple posible** que funciona en todas partes: inserta un disco, haz clic en un botón,
+obtén un MKV perfecto. Sin configuración necesaria, pero con control total si lo deseas.
+Funciona en **Fedora, Arch, Ubuntu, Debian** (Linux) y **Windows 10/11**.
 
 ## 🎯 Características
 

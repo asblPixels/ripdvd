@@ -4,10 +4,10 @@
 
 ### From disc to digital — effortlessly.
 
-**A minimalist, open-source DVD ripper for Linux (Fedora / GNOME)**
+**A minimalist, open-source DVD ripper for Linux & Windows (Fedora, Arch, Ubuntu, Debian, Windows)**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Fedora%20Linux-blue.svg)](https://fedoraproject.org/)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%26%20Windows-blue.svg)](https://github.com/asblPixels/ripdvd)
 [![Desktop](https://img.shields.io/badge/desktop-GNOME%2049-green.svg)](https://gnome.org/)
 [![GUI](https://img.shields.io/badge/GUI-GTK4%20%2F%20libadwaita-teal.svg)](https://gnome.org/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -25,8 +25,8 @@
 
 ## 📖 About
 
-**RipDvD** is a free, open-source, minimalist DVD ripping application built for Linux.
-It provides a clean, native GNOME (GTK4 / libadwaita) graphical interface on top of
+**RipDvD** is a free, open-source, minimalist DVD ripping application built for Linux and Windows.
+It provides a clean, native GUI (GTK4 / libadwaita on Linux, tkinter on Windows) on top of
 [HandBrakeCLI](https://handbrake.fr/), turning your DVD collection into high-quality
 MKV files ready for your home media server (Jellyfin, Kodi, Plex).
 
@@ -34,11 +34,12 @@ MKV files ready for your home media server (Jellyfin, Kodi, Plex).
 > as part of its open-source software initiative. It is released under the MIT License
 > and is free to use, modify and distribute.
 
-### ✨ Why ripdvd?
+### ✨ Why RipDvD?
 
-Most DVD rippers on Linux are either command-line only, overly complex, or Windows-only.
-RipDvD aims to be **the simplest possible tool**: insert a disc, click one button,
+Most DVD rippers are either command-line only, overly complex, platform-locked, or Windows-only.
+RipDvD aims to be **the simplest possible tool** that works everywhere: insert a disc, click one button,
 get a perfect MKV. No configuration required, but full control when you want it.
+It runs on **Fedora, Arch, Ubuntu, Debian** (Linux) and **Windows 10/11**.
 
 ## 🎯 Features
 
