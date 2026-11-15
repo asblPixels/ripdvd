@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Logo with transparent background (no more black square) across the app, icons, READMEs, wiki and social preview.
+- Designed social preview card (logo + tagline + platforms).
 
 ## [1.2.1] - 2026-11-15
 
