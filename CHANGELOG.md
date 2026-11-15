@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - CI status badge in the READMEs and a ready-to-use social preview image (`data/social-preview.png`, 1280×640).
 
+## [1.2.2] - 2026-11-15
+
+### Changed
+- **Logo background removed**: the asblPixels logo is now a transparent PNG (alpha channel), so it blends cleanly into the app hero banner, the READMEs, the wiki and the social preview instead of showing a black square.
+- **Icons regenerated** from the transparent logo (16–512 px) and a fresh multi-resolution Windows `.ico`.
+- **Social preview** rebuilt with the transparent logo on the asblPixels ink background.
+- Version bumped to 1.2.2.
+
 ## [1.2.1] - 2026-11-15
 
 ### Added

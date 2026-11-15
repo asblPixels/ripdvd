@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="data/logo.png" width="150" alt="RipDvD logo">
+<img src="data/logo.png" width="220" alt="RipDvD logo">
 
 # 🎬 RipDvD
 

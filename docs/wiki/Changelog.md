@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configuration file
 - Multiple title queue
 
+## [1.2.2] - 2026-11-15
+
+### Changed
+- Logo with transparent background (no more black square) across the app, icons, READMEs, wiki and social preview.
+
 ## [1.2.1] - 2026-11-15
 
 ### Added

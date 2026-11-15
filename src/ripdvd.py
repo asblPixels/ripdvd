@@ -196,7 +196,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         logo_path = find_logo()
         if logo_path:
             logo = Gtk.Picture.new_for_filename(logo_path)
-            logo.set_size_request(64, 64)
+            logo.set_size_request(96, 64)
             logo.set_content_fit(Gtk.ContentFit.CONTAIN)
             logo.set_valign(Gtk.Align.CENTER)
             logo.add_css_class("hero-logo")
@@ -759,7 +759,7 @@ class RipdvdWindow(Adw.ApplicationWindow):
         name.add_css_class("title-1")
         name.add_css_class("hero-title")
         hero.append(name)
-        ver = Gtk.Label(label="Version 1.2.1 — From disc to digital, effortlessly.")
+        ver = Gtk.Label(label="Version 1.2.2 — From disc to digital, effortlessly.")
         ver.add_css_class("hero-sub")
         hero.append(ver)
         content.append(hero)
