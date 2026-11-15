@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- CI status badge in the READMEs and a ready-to-use social preview image (`data/social-preview.png`, 1280×640).
+
 ## [1.2.1] - 2026-11-15
 
 ### Added

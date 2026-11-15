@@ -14,6 +14,7 @@
 [![GUI](https://img.shields.io/badge/GUI-GTK4%20%2F%20libadwaita-teal.svg)](https://gnome.org/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Backend](https://img.shields.io/badge/backend-HandBrakeCLI-orange.svg)](https://handbrake.fr/)
+[![CI](https://github.com/asblPixels/ripdvd/actions/workflows/ci.yml/badge.svg)](https://github.com/asblPixels/ripdvd/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/asblPixels/ripdvd.svg)](https://github.com/asblPixels/ripdvd/releases)
 
 <br>
