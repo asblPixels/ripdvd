@@ -44,6 +44,22 @@ RipDvD vise à être **l'outil le plus simple possible** qui fonctionne partout 
 obtenez un MKV parfait. Aucune configuration requise, mais un contrôle total si vous le souhaitez.
 Il fonctionne sur **Fedora, Arch, Ubuntu, Debian** (Linux) et **Windows 10/11**.
 
+### 📺 Votre propre plateforme de streaming — avec ce qui dort dans vos placards
+
+Les abonnements augmentent, les pubs s'installent et les films disparaissent des catalogues du jour au lendemain.
+Pendant ce temps, vos DVD prennent la poussière. RipDvD en fait la première brique de **votre propre « Netflix » à la maison** :
+
+```
+  📀 Vos DVD  ──►  🎬 RipDvD (un clic)  ──►  🗄️ Jellyfin / Kodi / Plex  ──►  📺 TV · 📱 smartphone · 💻 tablette
+```
+
+- 💸 **Zéro abonnement** — des outils gratuits, un vieux PC recyclé suffit comme serveur.
+- 🔒 **Rien ne disparaît** — vos films restent dans votre médiathèque, pas dans le catalogue d'un autre.
+- 🌐 **Fonctionne sans internet** — tout reste chez vous, sur votre réseau.
+- 👨‍👩‍👧 **Pour toute la famille** — tous les écrans de la maison accèdent à la même médiathèque.
+- 🖼️ **Pensé pour les media servers** — des MKV propres avec chapitres ; Jellyfin/Kodi récupèrent affiches et résumés automatiquement.
+- 🏡 **Sauvez vos souvenirs** — les DVD faits maison (mariages, anniversaires, premiers pas) ne sont pas éternels. Numérisez-les avant qu'ils ne s'abîment.
+
 ## 🎯 Fonctionnalités
 
 - 🖱️ **Rippage en un clic** — insérez un DVD, cliquez sur *Rip DVD*, obtenez un MKV prêt à streamer.
@@ -293,6 +309,16 @@ Ouvrez le log de debug (`~/.ripdvd-debug.log`) ou cliquez sur **Voir le log de d
 ### Encodage lent sur les vieux CPU
 C'est normal — l'encodage logiciel x264 sur un i3 Sandy Bridge prend ~10-15 min par film. L'application utilise le preset `medium` pour un bon compromis qualité/vitesse. Pour des rips plus rapides, modifiez `--encoder-preset` en `fast` ou `veryfast` dans `src/ripdvd.py`.
 
+## 🤝 Besoin d'un coup de main ?
+
+RipDvD est créé par **Pixel's ASBL**, un atelier d'inclusion numérique à Boussu (Belgique).
+Pas de lecteur DVD, ou pas envie de vous en occuper ? Passez à l'atelier : nous numérisons vos vidéos de famille
+et vous aidons à installer votre médiathèque à la maison (Jellyfin/Kodi).
+
+📍 Rue Alfred Dendal 56, 7300 Boussu · 📞 0456 96 03 28 · ✉️ info@asblpixels.be · [Facebook](https://www.facebook.com/asblpixels)
+
+⭐ **Le projet vous plaît ? Mettez une étoile au dépôt** — c'est le moyen le plus simple d'aider d'autres personnes à le découvrir.
+
 ## 🙏 Remerciements
 
 Ce projet n'existerait pas sans le travail incroyable de :
@@ -326,8 +352,11 @@ Ce projet est sous licence **MIT** — voir [LICENSE](LICENSE) pour les détails
 
 ## ⚠️ Note légale
 
-Cet outil est destiné à la sauvegarde de DVD que vous possédez pour un usage personnel.
-Le déchiffrement de disques protégés par copie peut être restreint dans votre pays. Vérifiez la législation locale.
+RipDvD est destiné à réaliser des copies personnelles de DVD **que vous possédez**, pour un usage **au sein de votre foyer**.
+
+- ✅ Disques faits maison et non protégés (vidéos de famille, vos propres enregistrements) — aucune restriction.
+- ⚠️ Les DVD du commerce sont généralement protégés (CSS). Leur déchiffrement peut être restreint dans votre pays, même pour une copie privée. Vérifiez la législation locale.
+- ❌ Ne partagez pas les films copiés en dehors de votre foyer (par ex. en ouvrant votre serveur multimédia à d'autres personnes). RipDvD n'est pas un outil de piratage et ne doit pas être utilisé comme tel.
 
 ---
 

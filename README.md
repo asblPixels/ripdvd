@@ -44,6 +44,22 @@ RipDvD aims to be **the simplest possible tool** that works everywhere: insert a
 get a perfect MKV. No configuration required, but full control when you want it.
 It runs on **Fedora, Arch, Ubuntu, Debian** (Linux) and **Windows 10/11**.
 
+### 📺 Your own streaming service — built from your shelf
+
+Subscriptions go up, ads creep in, and films vanish from catalogues overnight.
+Meanwhile, your DVDs are gathering dust. RipDvD turns them into the first brick of **your own home streaming service**:
+
+```
+  📀 Your DVDs  ──►  🎬 RipDvD (one click)  ──►  🗄️ Jellyfin / Kodi / Plex  ──►  📺 TV · 📱 phone · 💻 tablet
+```
+
+- 💸 **No monthly fee** — free tools, an old recycled PC is enough as a server.
+- 🔒 **Nothing disappears** — your films stay in your library, not in someone's catalogue.
+- 🌐 **Works offline** — everything lives at home, on your network.
+- 👨‍👩‍👧 **For the whole household** — every screen in the house gets the same library.
+- 🖼️ **Media-server friendly** — clean MKV files with chapters; Jellyfin/Kodi fetch posters and summaries automatically.
+- 🏡 **Save family memories** — home-made DVDs (weddings, birthdays, first steps) don't last forever. Digitise them before they fade.
+
 ## 🎯 Features
 
 - 🖱️ **One-click ripping** — insert a DVD, click *Rip DVD*, get a ready-to-stream MKV.
@@ -291,6 +307,16 @@ Open the debug log (`~/.ripdvd-debug.log`) or click **Voir le log de debug**. Th
 ### Slow encoding on older CPUs
 This is expected — x264 software encoding on a Sandy Bridge i3 takes ~10–15 min per movie. The app uses `medium` preset for a good quality/speed balance. For faster rips, edit `--encoder-preset` to `fast` or `veryfast` in `src/ripdvd.py`.
 
+## 🤝 Need a hand?
+
+RipDvD is made by **Pixel's ASBL**, a nonprofit digital-inclusion workshop in Boussu, Belgium.
+No DVD drive, or you'd rather not do it yourself? Visit our workshop — we digitise your family videos
+and help you set up your home media server (Jellyfin/Kodi).
+
+📍 Rue Alfred Dendal 56, 7300 Boussu (BE) · 📞 +32 456 96 03 28 · ✉️ info@asblpixels.be · [Facebook](https://www.facebook.com/asblpixels)
+
+⭐ **Like the project? Star the repo** — it's the easiest way to help other people find it.
+
 ## 🙏 Acknowledgements
 
 This project would not exist without the incredible work of:
@@ -325,8 +351,11 @@ This project is licensed under the **MIT License** — see [LICENSE](LICENSE) fo
 
 ## ⚠️ Legal note
 
-This tool is intended for backing up DVDs you own for personal use.
-Decrypting copy-protected discs may be restricted in your country. Check your local laws.
+RipDvD is intended for making personal copies of DVDs **you own**, for use within **your own household**.
+
+- ✅ Home-made and unprotected discs (family videos, your own recordings) — no restriction.
+- ⚠️ Commercial DVDs are usually copy-protected (CSS). Decrypting them may be restricted in your country, even for a private copy. Check your local laws.
+- ❌ Do not share ripped films outside your household (e.g. opening your media server to other people). RipDvD is not a piracy tool and must not be used as one.
 
 ---
 
