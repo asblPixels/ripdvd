@@ -193,13 +193,6 @@ class RipdvdWindow(Adw.ApplicationWindow):
         brand_caption.set_margin_bottom(10)
         box.append(brand_caption)
 
-        src_text = f"HandBrake : {self.hb_source or 'NON TROUVÉ'}"
-        self.src_label = Gtk.Label(label=src_text)
-        self.src_label.add_css_class("caption")
-        self.src_label.add_css_class("dim-label")
-        self.src_label.set_margin_bottom(10)
-        box.append(self.src_label)
-
         self.status = Gtk.Label(label="Insertion d'un DVD puis scan automatique…")
         self.status.add_css_class("dim-label")
         self.status.set_wrap(True)
